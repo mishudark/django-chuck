@@ -280,8 +280,7 @@ class BaseCommand(object):
         )
 
     def execute(self, cmd):
-        process = subprocess.Popen(cmd, **self.get_subprocess_kwargs())
-        stdout, stderr = process.communicate()
+        subprocess.call(cmd, **self.get_subprocess_kwargs())
 
     def execute_in_project(self, cmd, return_result=False):
         """
