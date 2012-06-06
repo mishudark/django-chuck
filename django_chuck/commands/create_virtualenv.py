@@ -29,10 +29,10 @@ class Command(BaseCommand):
         self.print_header("CREATE VIRTUALENV")
 
         if self.use_virtualenvwrapper:
-            subprocess.call("source virtualenvwrapper.sh; mkvirtualenv --no-site-packages " + self.site_name, shell=True)
+            self.execute(". virtualenvwrapper.sh; mkvirtualenv --no-site-packages " + self.site_name)
             export_dest = open(os.path.join(self.virtualenv_dir, "bin", "postactivate"), "a")
         else:
-            subprocess.call("virtualenv --no-site-packages " + self.virtualenv_dir, shell=True)
+            self.execute("virtualenv --no-site-packages " + self.virtualenv_dir)
             export_dest = open(os.path.join(self.virtualenv_dir, "bin", "activate"), "a")
 
         self.print_header("SETUP VIRTUALENV")

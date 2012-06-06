@@ -271,7 +271,17 @@ class BaseCommand(object):
         module_list = sorted(module_list, key=lambda module: module_cache.get(module).priority)
         return module_list
 
+    def get_subprocess_kwargs(self):
+        return dict(
+            shell=True,
+            stderr=subprocess.PIPE,
+            stdin=subprocess.PIPE,
+#            executable="bin/bash",
+        )
 
+    def execute(self, cmd):
+        process = subprocess.Popen(cmd, **self.get_subprocess_kwargs())
+        stdout, stderr = process.communicate()
 
     def execute_in_project(self, cmd, return_result=False):
         """
@@ -280,14 +290,10 @@ class BaseCommand(object):
         printed out or returned.
         """
         commands = self.get_virtualenv_setup_commands(cmd)
-        kwargs = dict(
-            shell=True,
-            stderr=subprocess.PIPE,
-            stdin=subprocess.PIPE,
-        )
+        kwargs = self.get_subprocess_kwargs()
+
         if return_result:
             kwargs['stdout'] = subprocess.PIPE
-
 
         process = subprocess.Popen('; '.join(commands), **kwargs)
         stdout, stderr = process.communicate()
