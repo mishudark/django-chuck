@@ -284,7 +284,6 @@ class BaseCommand(object):
             shell=True,
             stderr=subprocess.PIPE,
             stdin=subprocess.PIPE,
-            executable='bin/bash',
         )
         if return_result:
             kwargs['stdout'] = subprocess.PIPE
@@ -303,12 +302,12 @@ class BaseCommand(object):
     def get_virtualenv_setup_commands(self, cmd):
         if self.use_virtualenvwrapper:
             commands = [
-                'source virtualenvwrapper.sh',
+                '. virtualenvwrapper.sh',
                 'workon ' + self.site_name,
                 ]
         else:
             commands = [
-                'source ' + os.path.join(os.path.expanduser(self.virtualenv_dir), "bin", "activate"),
+                '. ' + os.path.join(os.path.expanduser(self.virtualenv_dir), "bin", "activate"),
                 ]
         commands.append(cmd)
         return commands
