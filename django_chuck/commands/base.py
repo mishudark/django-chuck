@@ -280,7 +280,7 @@ class BaseCommand(object):
         )
 
     def execute(self, cmd):
-        subprocess.call(cmd, **self.get_subprocess_kwargs())
+        subprocess.call(cmd, shell=True)
 
     def execute_in_project(self, cmd, return_result=False):
         """
