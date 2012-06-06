@@ -284,6 +284,7 @@ class BaseCommand(object):
             shell=True,
             stderr=subprocess.PIPE,
             stdin=subprocess.PIPE,
+            executable='bin/bash',
         )
         if return_result:
             kwargs['stdout'] = subprocess.PIPE
