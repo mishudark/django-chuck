@@ -2,6 +2,6 @@
 
 #!chuck_appends SETTINGS
 COMPRESS_PRECOMPILERS += (
-    'text/coffeescript', 'coffee --compile --stdio'
+    ('text/coffeescript', 'coffee --compile --stdio'),
 )
 #!end
