@@ -28,6 +28,11 @@ system, setup your hosting or do whatever you might imagine!
    Git has been thoroughly tested.
 
 
+Known issues
+------------
+
+* virtualenvwrapper support on Linux is broken. See issue #6.
+
 Installation
 ------------
 
