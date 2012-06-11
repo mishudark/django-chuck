@@ -22,7 +22,7 @@ class Command(BaseCommand):
         super(Command, self).handle(args, cfg)
 
         self.print_header("INSTALL VIRTUALENV")
-        self.execute_in_project("pip install -r " + os.path.join(self.site_dir, "requirements", "requirements_dev.txt"))
+        self.execute_in_project("pip install -r " + os.path.join(self.site_dir, "requirements", "requirements_local.txt"))
 
         # Install additional apps
         if self.additional_apps:
