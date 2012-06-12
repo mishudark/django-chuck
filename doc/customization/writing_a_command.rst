@@ -7,7 +7,7 @@ The parameter will get parsed by ``argparse`` so you can use all options describ
 
 The ``handle`` function will get two parameters ``args``, the parsed command line arguments, and ``cfg``, a dictionary of all config settings. Just pass them to the constructor of the ``BaseCommand`` and you will always get either the arg value or config value if you call the property directly on your command object.
 
-Let's say you define a new parameter ``myurl`` the user will automatically be allowed to set it either on the command line or in his config file by defining the ``dest`` value. You dont have to care where the parameter comes from you can just call ``self.myurl`` and will get the arg value, config value or None.
+Let's say you define a new parameter ``myurl`` the user will automatically be allowed to set it either on the command line or in his config file by defining the ``dest`` value. You don't have to care where the parameter comes from you can just call ``self.myurl`` and will get the arg value, config value or None.
 
 The ``BaseCommand`` class also gives you some helper functions.
 
@@ -19,7 +19,7 @@ db_cleanup              Delete django tables for complete db import
 load_fixtures(file)     Load the given fixture file
 ======================= ==============
 
-You want to do some cleanup after a system failure or user interruption? Just implement the method ``signal_handler`` and do what ever you want to do. By default the project- and virtualenv directory will get erased automatically if the user doesnt set ``delete_project_on_failure`` to ``False`` in the config file.
+You want to do some cleanup after a system failure or user interruption? Just implement the method ``signal_handler`` and do what ever you want to do. By default the project directory and the virtualenv directory will get erased automatically if the user doesnt set ``delete_project_on_failure`` to ``False`` in the config file.
 
 Here is a complete example:
 

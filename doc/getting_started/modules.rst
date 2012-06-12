@@ -26,10 +26,10 @@ django-imagekit                                                               Au
 django-mptt                                                                   Build tree-based models
 django-tastypie                                                               Creating delicious REST APIs
 django-tastypie-mongoengine                                                   MongoEngine support for django-tastypie.
-fabric                                                                        `Fabric <http://pypi.python.org/pypi/Fabric>`_ is a simple, Pythonic tool for remote execution and deployment.
+fabric                                                                        `Fabric <http://pypi.python.org/pypi/Fabric>`_ is a simple, pythonic tool for remote execution and deployment.
 feincms                                                                       Installs the `FeinCMS <http://www.feinheit.ch/media/labs/feincms/>`_
 html5lib                                                                      Python library for working with HTML5 documents
-jenkins                                                                       Plug and play integration with the `Jenkins Coninuous Integration <http://www.jenkins-ci.org>`_ server
+jenkins                                                                       Plug and play integration with the `Jenkins Continuous Integration <http://www.jenkins-ci.org>`_ server
 jquery                                                                        Installs the `jQuery <http://jquery.org/>`_ javascript library.
                                                                               Needs git in order to work properly.
 less-css                                                                      The dynamic stylesheet language `less-css <http://lesscss.org/>`_.
@@ -41,8 +41,8 @@ nginx                                                                         Ge
 oracle                                                                        `Oracle <http://www.oracle.com>`_ database settings
 pil                                                                           The Python Image Library
 postgres                                                                      `PostgreSQL <http://www.postgresql.org>`_ database settings
-`south <http://south.aeracode.org/>`_                                         The defacto standard for database migrations
-twitter-bootstrap                                                             The current defacto standard for frontend prototyping.
+`south <http://south.aeracode.org/>`_                                         The de facto standard for database migrations
+twitter-bootstrap                                                             The current de facto standard for frontend prototyping.
                                                                               Requires git and depends on less-css module
 unittest                                                                      A collection of apps that make your TDD life a lot more easier.
 uwsgi                                                                         Generates a config and app file for your `uWSGI <http://projects.unbit.it/uwsgi/>`_ deployment
@@ -64,7 +64,7 @@ Module                                                           Description
 `django-any <https://github.com/kmmbvnr/django-any>`_            Allows you to easily generate some random test data
 `pylint <http://www.logilab.org/project/pylint>`_                Checks your code quality for best practices and awful smells
 `django-jenkins <http://pypi.python.org/pypi/django-jenkins>`_   Plug and play continuous integration with Django and Jenkins
-`coverage <http://nedbatchelder.com/code/coverage/>`_            Calculatze the code coverage of your unit tests
+`coverage <http://nedbatchelder.com/code/coverage/>`_            Calculates the code coverage of your unit tests
 `mock <http://pypi.python.org/pypi/mock/>`_                      A mocking library
 ================================================================ ================
 
@@ -123,7 +123,7 @@ with the fabric module, Chuck created a fab file for you to connect via ssh, che
 (we use stage for testing and live for production environment), play in database updates, update static files and
 reload the webserver.
 
-Have a look at ``fabfile/__init__.py`` and at least change the user- and hostname for the ssh connection, but surely we also couldnt guess your remote directory structure so adjust them as well.
+Have a look at ``fabfile/__init__.py`` and at least change the user- and hostname for the ssh connection, but surely we also couldn't guess your remote directory structure so adjust them as well.
 Afterwards deployment is as easy as hitting a button. For example this will update your production environment:
 
 .. code-block:: bash
