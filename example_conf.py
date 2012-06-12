@@ -21,6 +21,10 @@ use_virtualenvwrapper = False
 # project_name will be automatically prepended
 django_settings = "settings.dev"
 
+# requirements file to install in virtualenv
+# default: requirements_local.txt
+requirements_file = "requirements_local.txt"
+
 # version control system
 # possible values: git, svn, cvs, hg
 # default: git

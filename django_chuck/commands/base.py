@@ -422,6 +422,12 @@ class BaseCommand(object):
             elif not result:
                 result = self.project_name + ".settings.dev"
 
+        elif name == "requirements_file":
+            result = self.arg_or_cfg(name)
+
+            if not result:
+                result = "requirements_local.txt"
+
         elif name == "site_name":
             result = self.project_prefix + "-" + self.project_name
 

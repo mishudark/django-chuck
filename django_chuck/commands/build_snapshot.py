@@ -44,4 +44,8 @@ class Command(BaseCommand):
             else:
                 index = line.find('\n')
             app_name = line[0:index]
-            print "%s==%s\n" % (app_name, self.requirements[app_name]),
+
+            if self.requirements.get(app_name):
+                print "%s==%s" % (app_name, self.requirements[app_name])
+            else:
+                print "%s" % (app_name,)
