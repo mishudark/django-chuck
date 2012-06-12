@@ -23,7 +23,7 @@ class build_py(_build_py):
     ]
 
     setup(name="django-chuck",
-          version="0.2.1",
+          version="0.2.3",
           author="Notch Interactive GmbH",
           author_email="chuck@notch-interactive.com",
           url="http://github.com/notch-interactive/django-chuck",
