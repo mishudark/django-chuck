@@ -276,11 +276,24 @@ class BaseCommand(object):
             shell=True,
             stderr=subprocess.PIPE,
             stdin=subprocess.PIPE,
-#            executable="bin/bash",
         )
 
-    def execute(self, cmd):
-        os.system(cmd)
+
+    def execute(self, command, return_result=False):
+        kwargs = self.get_subprocess_kwargs()
+
+        if return_result:
+            kwargs['stdout'] = subprocess.PIPE
+
+        process = subprocess.Popen(command, **kwargs)
+        stdout, stderr = process.communicate()
+
+        if stderr:
+            print stderr
+
+        if return_result:
+            return stdout
+
 
     def execute_in_project(self, cmd, return_result=False):
         """
@@ -289,19 +302,7 @@ class BaseCommand(object):
         printed out or returned.
         """
         commands = self.get_virtualenv_setup_commands(cmd)
-        kwargs = self.get_subprocess_kwargs()
-
-        if return_result:
-            kwargs['stdout'] = subprocess.PIPE
-
-        process = subprocess.Popen('; '.join(commands), **kwargs)
-        stdout, stderr = process.communicate()
-
-        if stderr:
-            print stderr
-            self.kill_system()
-        if return_result:
-            return stdout
+        self.execute('; '.join(commands), return_result)
 
 
     def get_virtualenv_setup_commands(self, cmd):
