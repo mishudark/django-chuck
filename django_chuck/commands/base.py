@@ -280,19 +280,28 @@ class BaseCommand(object):
 
 
     def execute(self, command, return_result=False):
-        kwargs = self.get_subprocess_kwargs()
-
         if return_result:
-            kwargs['stdout'] = subprocess.PIPE
+            kwargs = self.get_subprocess_kwargs()
 
-        process = subprocess.Popen(command, **kwargs)
-        stdout, stderr = process.communicate()
+            if return_result:
+                kwargs['stdout'] = subprocess.PIPE
 
-        if stderr:
-            print stderr
+            process = subprocess.Popen(command, **kwargs)
+            stdout, stderr = process.communicate()
 
-        if return_result:
+            if stderr:
+                print stderr
+
+            if process.returncode != 0:
+                print return_result
+                self.kill_system()
+
             return stdout
+        else:
+            return_code = subprocess.call(command, shell=True)
+
+            if return_code != 0:
+                self.kill_system()
 
 
     def execute_in_project(self, cmd, return_result=False):
@@ -302,7 +311,7 @@ class BaseCommand(object):
         printed out or returned.
         """
         commands = self.get_virtualenv_setup_commands(cmd)
-        self.execute('; '.join(commands), return_result)
+        return self.execute('; '.join(commands), return_result)
 
 
     def get_virtualenv_setup_commands(self, cmd):
