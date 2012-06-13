@@ -15,14 +15,14 @@ Afterwards you normally need a requirements.txt and some settings so let us crea
 
 The ``project`` directory will get renamed to whatever the user specifies as project name.
 
-Now we create the file requirements.txt to add our requirements (coffeemaschine) to the projects requirements file. Therefore we define that we want to extends ``requirements/requirements.txt`` and append a line to the ``REQUIREMENTS`` block.
+Now we create the file requirements.txt to add our requirements (coffeemaker) to the projects requirements file. Therefore we define that we want to extends ``requirements/requirements.txt`` and append a line to the ``REQUIREMENTS`` block.
 
 .. code-block:: bash
 
   #!chuck_extends requirements/requirements.txt
 
   #!chuck_appends REQUREMENTS
-  coffeemaschine
+  coffeemaker
   #!end
 
 Have a look at the core modules ``requirements/requirements.txt`` file and you will see the defined ``REQUIREMENTS`` block there
@@ -33,7 +33,7 @@ Have a look at the core modules ``requirements/requirements.txt`` file and you w
   Django==1.3.1
   #!end
 
-Remember ``#!chuck_appends`` will append to that block while ``#!chuck_prepends`` will prepend and ``#!chuck_renders`` will completly overwrite the block.
+Remember ``#!chuck_appends`` will append to that block while ``#!chuck_prepends`` will prepend and ``#!chuck_renders`` will completely overwrite the block.
 
 Next we need to add some settings (INSTALLED_APPS, and the COFFEEMAKER_HEAT variable).
 Here's the patch file ``coffeemaker/project/settings/common.py``
@@ -51,7 +51,7 @@ Here's the patch file ``coffeemaker/project/settings/common.py``
   #!end
 
 You see the code blocks are normally named after the Django variable or list they extend or after the file they append.
-For more examples dont be shy and have a look at the default modules. They dont bite ;)
+For more examples don't be shy and have a look at the default modules. They don't bite ;)
 
 
 Module dependencies

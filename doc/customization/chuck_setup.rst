@@ -3,7 +3,7 @@ chuck_setup.py
 
 The file ``chuck_setup.py`` is a normal Python file and used to describe a project. If this file is available Chuck is able to automatically setup the project using the ``setup_project`` command.
 
-It can not only be used to describe a project (e.g. project prefix and name, settings file etc.), but also to define hooks before and every build step like syncdb or build virtualenv to customize the build process completly to your needs!
+It can not only be used to describe a project (e.g. project prefix and name, settings file etc.), but also to define hooks before and every build step like syncdb or build virtualenv to customize the build process completely to your needs!
 
 The script gets some variables and help functions injected to make your life easier. Here's an overview which variables get injected.
 
