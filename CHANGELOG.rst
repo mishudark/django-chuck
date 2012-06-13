@@ -6,6 +6,7 @@ Django Chuck Changelog
 -----
 
 * search_module command
+* rebuild_virtualenv command
 * Support for travis-ci and tox by msabramo
 
 
