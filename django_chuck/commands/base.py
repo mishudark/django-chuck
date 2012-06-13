@@ -271,6 +271,7 @@ class BaseCommand(object):
         module_list = sorted(module_list, key=lambda module: module_cache.get(module).priority)
         return module_list
 
+
     def get_subprocess_kwargs(self):
         return dict(
             shell=True,

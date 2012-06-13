@@ -3,8 +3,10 @@ Django Chuck Changelog
 =======================
 
 0.3.0
+-----
 
 * Support for travis-ci and tox by msabramo
+
 
 0.2.3
 -----
