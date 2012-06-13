@@ -10,5 +10,8 @@ install:
   - "if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install --use-mirrors argparse; fi"
   - python setup.py install
 
-script: chuck list_modules
+script: ./test.sh
 
+notifications:
+  email:
+    - chuck@notch-interactive.com
