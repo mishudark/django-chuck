@@ -217,12 +217,16 @@ class BaseCommand(object):
         return install_modules
 
     def get_module_cache(self):
+        """
+        Return dict of modules with key module name and value base module
+        Useful to access modules description, dependency, priority etc
+        """
         # Create module dir cache
         module_cache = {}
         for module_basedir in self.module_basedirs:
             for module in os.listdir(module_basedir):
                 module_dir = os.path.join(module_basedir, module)
-                if os.path.isdir(module_dir) and module not in self.module_cache.keys():
+                if os.path.isdir(module_dir) and module not in module_cache.keys():
                     module_cache[module] = BaseModule(module, module_dir)
                     # TODO: Ignore list for folders and filenames
                     if module_cache[module].cfg:
