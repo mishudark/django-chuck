@@ -16,14 +16,6 @@ class BaseCommand(object):
     help = "The base class of all chuck commands"
 
     def got_killed(self, signum=2, frame=None):
-        killed_msgs = [
-            "Chuck killed Death!",
-            "Chuck's going on vacation.",
-            "G0t killed by user.",
-        ]
-
-        print "\n\n<<< " + choice(killed_msgs)
-
         if getattr(self, "delete_project_on_failure") and self.delete_project_on_failure:
             if os.path.exists(self.site_dir):
                 print "Deleting project data " + self.site_dir
