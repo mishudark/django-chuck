@@ -215,6 +215,7 @@ class BaseCommand(object):
         """
         # Create module dir cache
         module_cache = {}
+
         for module_basedir in self.module_basedirs:
             for module in os.listdir(module_basedir):
                 module_dir = os.path.join(module_basedir, module)
@@ -226,7 +227,10 @@ class BaseCommand(object):
         return module_cache
 
     def clean_module_list(self, module_list, module_cache):
-
+        """
+        Recursivly append dependencies to module list, remove duplicates
+        and order modules by priority
+        """
         errors = []
 
         # Add dependencies
@@ -430,9 +434,9 @@ class BaseCommand(object):
         elif name == "module_basedirs":
             result = self.arg_or_cfg(name)
 
-            if result:
+            if result and "." in result:
                 result[result.index(".")] = self.module_basedir
-            else:
+            elif not result:
                 result = [self.module_basedir]
 
         else:
