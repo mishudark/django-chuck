@@ -34,7 +34,7 @@ class BaseModule(object):
     def get_description(self):
         if self.cfg and hasattr(self.cfg, 'description'):
             return self.cfg.description
-        return None
+        return ""
     description = property(get_description)
 
     def get_post_build(self):
@@ -48,4 +48,3 @@ class BaseModule(object):
             return self.cfg.post_build
         return None
     post_setup = property(get_post_setup)
-
