@@ -3,8 +3,11 @@ Django Chuck Changelog
 =======================
 
 0.3.0
+-----
 
+* search_module command
 * Support for travis-ci and tox by msabramo
+
 
 0.2.3
 -----

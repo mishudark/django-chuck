@@ -49,20 +49,17 @@
             
   <div class="section" id="welcome-to-django-chuck-s-documentation">
 <h1>Welcome to Django Chuck&#8217;s documentation!<a class="headerlink" href="#welcome-to-django-chuck-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Django Chuck is a modular, open source, command-based project build system
-developed by Notch Interactive GmbH, that gives you the power to create
-new projects as fast as pushing on a button.</p>
-<p>In the Django Chuck world, everything is organized within so-called modules, which
-incrementally get compiled into a project. There is really nothing that you can&#8217;t
-configure or adjust and guess what, writing and adjusting your modules is totally easy.
-On top of that, Django Chuck comes with an already impressive amount of built-in
-modules and a bullet proof project structure.</p>
-<p>But Chuck cannot be just used to create a project. It can also checkout the
-source for you and setup everything until the dev server is up and running and
-you&#8217;re ready to do your development work. Just leave all the annoying stuff
-to Chuck and if there is some task Chuck can&#8217;t do for you at the moment you
-can add your own command to let Chuck configure your continuous integration
-system, setup your hosting or do whatever you might imagine!</p>
+<p>Django Chuck is a modular, open source, command-based project build system developed by
+Notch Interactive GmbH, that gives you the power to create new projects as fast as pushing on a button.</p>
+<p>It creates a virtualenv and a Django project for you, installs all required Python packages, creates t
+he database and a fab file for automatic deployment and thanks to the module system you can easily add
+functionality like CMS, Facebook, Twitter, multilang and search engine support to a new or existing project.</p>
+<p>But Chuck cannot be just used to create a project it can also checkout the source for you and setup
+everything until the Django server is running and you&#8217;re ready to do your development work. Just leave all
+the annoying stuff to Chuck and if there is some task Chuck can&#8217;t do for you at the moment you can add
+your own command to let Chuck configure your continuous integration system, setup your hosting or do
+whatever you might imagine!</p>
+<p>Currently supported version control systems are: CVS, Subversion, GIT and Mercurial.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">Please note, that currently Django Chuck does NOT work on Windows machines. Please note
@@ -83,8 +80,10 @@ Git has been thoroughly tested.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started/basic_commands.html">2. Basic commands</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_commands.html#build-a-new-project">2.1. Build a new project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_commands.html#setup-an-existing-project">2.2. Setup an existing project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_commands.html#list-available-modules">2.1. List available modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_commands.html#search-for-a-module">2.2. Search for a module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_commands.html#build-a-new-project">2.3. Build a new project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_commands.html#setup-an-existing-project">2.4. Setup an existing project</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started/project_structure.html">3. Project structure</a><ul>
@@ -102,10 +101,6 @@ Git has been thoroughly tested.</p>
 <h2>Customizations<a class="headerlink" href="#customizations" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="customization/configuration.html">Configuring modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="customization/configuration.html#changing-the-default-module-set">Changing the default module set</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="customization/chuck_setup.html">chuck_setup.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customization/writing_templates.html">Writing templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="customization/add_module.html">Add your own modules</a></li>
@@ -185,7 +180,7 @@ Git has been thoroughly tested.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Notch Interactive GmbH.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

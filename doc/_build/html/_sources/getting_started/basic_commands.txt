@@ -2,6 +2,26 @@
 Basic commands
 ##############
 
+List available modules
+======================
+
+Just want to know what modules Chuck knows of?
+
+.. code-block:: bash
+
+  chuck list_modules
+
+
+Search for a module
+===================
+
+To search through the name and description of all modules use the command ``search_module``
+
+.. code-block:: bash
+
+  chuck search_module cms
+
+
 Build a new project
 ===================
 
