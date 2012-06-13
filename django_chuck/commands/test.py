@@ -13,9 +13,6 @@ class ComandsTest(unittest.TestCase):
 
 
     def test_arg_or_cfg(self):
-        self.test_obj.arg = type("Argh", (object,), {"project_name": "unfug"})
-        self.assertEqual(self.test_obj.arg_or_cfg("project_name"), "unfug")
-
         self.test_obj.arg = {}
         self.test_obj.cfg["project_name"] = "balle was here"
         self.assertEqual(self.test_obj.arg_or_cfg("project_name"), "balle was here")
@@ -31,6 +28,53 @@ class ComandsTest(unittest.TestCase):
         self.test_obj.cfg["default_modules"] = ["tick", "trick", "track"]
         self.test_obj.cfg["module_aliases"] = {"simpsons": ["homer", "marge", "bart", "lisa", "maggie"]}
         self.assertEqual(self.test_obj.get_install_modules(), ["core", "tick", "trick", "track", "homer", "marge", "bart", "lisa", "maggie", "futurama"])
+
+
+    def test_get_module_cache(self):
+        from django_chuck.base.modules import BaseModule
+
+        self.test_obj.args = type("Argh", (object,), {})
+        self.test_obj.cfg["module_basedirs"] = ["."]
+        self.test_obj.cfg["module_basedir"] = "../../modules"
+
+        cache = self.test_obj.get_module_cache()
+
+        self.assertIn("south", cache.keys())
+        self.assertIs(type(cache["south"]), BaseModule)
+        self.assertIn("South is the defacto standard for database migrations in Django", cache["south"].get_description())
+
+
+    def test_clean_module_list_dependency(self):
+        self.test_obj.args = type("Argh", (object,), {})
+        self.test_obj.cfg["module_basedirs"] = ["."]
+        self.test_obj.cfg["module_basedir"] = "../../modules"
+        cache = self.test_obj.get_module_cache()
+        module_list = ["django-cms"]
+        clean_modules = self.test_obj.clean_module_list(module_list, cache)
+
+        self.assertIsNot(module_list, clean_modules)
+        self.assertIn("html5lib", clean_modules)
+
+    def test_clean_module_list_duplicates(self):
+        self.test_obj.args = type("Argh", (object,), {})
+        self.test_obj.cfg["module_basedirs"] = ["."]
+        self.test_obj.cfg["module_basedir"] = "../../modules"
+        cache = self.test_obj.get_module_cache()
+        module_list = ["django-cms", "html5lib"]
+        clean_modules = self.test_obj.clean_module_list(module_list, cache)
+
+        self.assertEqual(len(filter(lambda x: x == "html5lib", clean_modules)), 1)
+
+
+    def test_clean_module_list_priority(self):
+        self.test_obj.args = type("Argh", (object,), {})
+        self.test_obj.cfg["module_basedirs"] = ["."]
+        self.test_obj.cfg["module_basedir"] = "../../modules"
+        cache = self.test_obj.get_module_cache()
+        module_list = ["django-cms", "html5lib"]
+        clean_modules = self.test_obj.clean_module_list(module_list, cache)
+
+        self.assertEqual(clean_modules[0], "django-1.3")
 
 
     def test_inject_variables_and_functions(self):

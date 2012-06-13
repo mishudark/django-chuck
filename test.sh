@@ -4,7 +4,10 @@
 cd django_chuck
 python test.py
 
-cd django_chuck/template/notch_interactive
+cd commands
+python test.py
+
+cd ../template/notch_interactive
 python test.py
 
 
