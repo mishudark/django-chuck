@@ -17,7 +17,7 @@ class TemplateEngineTest(unittest.TestCase):
         with open("django_chuck/template/notch_interactive/test/templates/common.py", "r") as f:
             content = f.read()
             block_content = self.engine.get_block_content(content, "MIDDLEWARE_CLASSES")
-            self.assertNotIn("#!chuck", block_content)
+            self.assertFalse("#!chuck" in block_content)
 
             block_content = self.engine.get_block_content(content, "SETTINGS")
             self.assertEqual(block_content, " ")
