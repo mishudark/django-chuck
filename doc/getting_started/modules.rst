@@ -46,6 +46,7 @@ twitter-bootstrap                                                             Th
                                                                               Requires git and depends on less-css module
 unittest                                                                      A collection of apps that make your TDD life a lot more easier.
 uwsgi                                                                         Generates a config and app file for your `uWSGI <http://projects.unbit.it/uwsgi/>`_ deployment
+uwsgi-cherokee                                                                Generate a uwsgi config to be used in Cherokee webserver
 ============================================================================= ==========================
 
 A few words about...
@@ -129,4 +130,3 @@ Afterwards deployment is as easy as hitting a button. For example this will upda
 .. code-block:: bash
 
   fab live deploy
-
