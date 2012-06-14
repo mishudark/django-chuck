@@ -5,7 +5,7 @@ Installation
 Requirements
 ============
 
-* Python 2.5 or higher
+* Python 2.6 or higher
 * pip
 * virtualenv
 
