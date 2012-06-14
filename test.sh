@@ -11,6 +11,6 @@ chuck list_modules || exit 1
 chuck search_module cms || exit 1
 chuck show_info fabric || exit 1
 chuck create_project test test || exit 1
-chuck create_project test test django-cms south uwsgi nginx || exit 1
+chuck create_project test test django-cms,south,uwsgi,nginx || exit 1
 
 exit 0
