@@ -10,6 +10,8 @@ class TemplateEngineTest(unittest.TestCase):
     def setUp(self):
         self.engine = TemplateEngine("django_chuck/template/notch_interactive/test", "django_chuck/template/notch_interactive//test/project_dir")
 
+        if not os.path.exists("django_chuck/template/notch_interactive//test/project_dir"):
+            os.makedirs("django_chuck/template/notch_interactive//test/project_dir")
 
     def test_get_block_content(self):
         with open("django_chuck/template/notch_interactive/test/templates/common.py", "r") as f:
