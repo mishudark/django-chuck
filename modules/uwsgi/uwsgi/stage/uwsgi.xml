@@ -17,17 +17,17 @@
   <module>django_wsgi</module>
 
   <!-- reload server after touching that file -->
-  <touch-reload>/home/notch/sites/$SITE_NAME-stage/uwsgi/stage/django_wsgi.py</touch-reload>
+  <touch-reload>$SERVER_PROJECT_BASEDIR/$SITE_NAME-stage/uwsgi/stage/django_wsgi.py</touch-reload>
 
   <!-- setup python environment -->
   <autoload/>
   <plugins>python</plugins>
-  <pythonpath>/home/notch/sites/$SITE_NAME-stage</pythonpath>
-  <pythonpath>/home/notch/sites/$SITE_NAME-stage/uwsgi/stage</pythonpath>
-  <pythonpath>/home/notch/virtualenvs/$SITE_NAME-stage/lib/python$PYTHON_VERSION/site-packages</pythonpath>
+  <pythonpath>$SERVER_PROJECT_BASEDIR/$SITE_NAME-stage</pythonpath>
+  <pythonpath>$SERVER_PROJECT_BASEDIR/$SITE_NAME-stage/uwsgi/stage</pythonpath>
+  <pythonpath>$SERVER_VIRTUALENV_BASEDIR/$SITE_NAME-stage/lib/python$PYTHON_VERSION/site-packages</pythonpath>
 
   <!-- use virtualenv -->
-  <pyhome>/home/notch/virtualenvs/$SITE_NAME/</pyhome>
+  <pyhome>$SERVER_VIRTUALENV_BASEDIR/$SITE_NAME/</pyhome>
 
 
   <!-- Number of processes. Set this to number of cpus not cores -->

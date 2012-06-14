@@ -1,4 +1,4 @@
-
+incompatibles = ["uwsgi-cherokee"]
 
 description = """
 Generates a config and app file for your uWSGI deployment.
