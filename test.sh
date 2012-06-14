@@ -12,7 +12,6 @@ chuck search_module cms || exit 1
 chuck show_info fabric || exit 1
 
 chuck create_project test core || exit 1
-chuck create_project test cms django-cms,south,uwsgi,nginx || exit 1
 
 chuck setup_project git://github.com/notch-interactive/django-chuck-testproject.git || exit 1
 
