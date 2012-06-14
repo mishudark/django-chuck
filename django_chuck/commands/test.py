@@ -35,7 +35,7 @@ class ComandsTest(unittest.TestCase):
 
         self.test_obj.args = type("Argh", (object,), {})
         self.test_obj.cfg["module_basedirs"] = ["."]
-        self.test_obj.cfg["module_basedir"] = "../../modules"
+        self.test_obj.cfg["module_basedir"] = "modules"
 
         cache = self.test_obj.get_module_cache()
 
@@ -47,7 +47,7 @@ class ComandsTest(unittest.TestCase):
     def test_clean_module_list_dependency(self):
         self.test_obj.args = type("Argh", (object,), {})
         self.test_obj.cfg["module_basedirs"] = ["."]
-        self.test_obj.cfg["module_basedir"] = "../../modules"
+        self.test_obj.cfg["module_basedir"] = "modules"
         cache = self.test_obj.get_module_cache()
         module_list = ["django-cms"]
         clean_modules = self.test_obj.clean_module_list(module_list, cache)
@@ -58,7 +58,7 @@ class ComandsTest(unittest.TestCase):
     def test_clean_module_list_duplicates(self):
         self.test_obj.args = type("Argh", (object,), {})
         self.test_obj.cfg["module_basedirs"] = ["."]
-        self.test_obj.cfg["module_basedir"] = "../../modules"
+        self.test_obj.cfg["module_basedir"] = "modules"
         cache = self.test_obj.get_module_cache()
         module_list = ["django-cms", "html5lib"]
         clean_modules = self.test_obj.clean_module_list(module_list, cache)
@@ -69,7 +69,7 @@ class ComandsTest(unittest.TestCase):
     def test_clean_module_list_priority(self):
         self.test_obj.args = type("Argh", (object,), {})
         self.test_obj.cfg["module_basedirs"] = ["."]
-        self.test_obj.cfg["module_basedir"] = "../../modules"
+        self.test_obj.cfg["module_basedir"] = "modules"
         cache = self.test_obj.get_module_cache()
         module_list = ["django-cms", "html5lib"]
         clean_modules = self.test_obj.clean_module_list(module_list, cache)
