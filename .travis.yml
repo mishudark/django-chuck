@@ -13,3 +13,7 @@ script: ./test.sh
 notifications:
   email:
     - chuck@notch-interactive.com
+
+branches:
+  only:
+    - 0.3.0
