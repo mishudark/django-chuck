@@ -271,16 +271,39 @@ class BaseCommand(object):
         module_list = sorted(module_list, key=lambda module: module_cache.get(module).priority)
         return module_list
 
+
     def get_subprocess_kwargs(self):
         return dict(
             shell=True,
             stderr=subprocess.PIPE,
             stdin=subprocess.PIPE,
-#            executable="bin/bash",
         )
 
-    def execute(self, cmd):
-        os.system(cmd)
+
+    def execute(self, command, return_result=False):
+        if return_result:
+            kwargs = self.get_subprocess_kwargs()
+
+            if return_result:
+                kwargs['stdout'] = subprocess.PIPE
+
+            process = subprocess.Popen(command, **kwargs)
+            stdout, stderr = process.communicate()
+
+            if stderr:
+                print stderr
+
+            if process.returncode != 0:
+                print return_result
+                self.kill_system()
+
+            return stdout
+        else:
+            return_code = subprocess.call(command, shell=True)
+
+            if return_code != 0:
+                self.kill_system()
+
 
     def execute_in_project(self, cmd, return_result=False):
         """
@@ -289,19 +312,7 @@ class BaseCommand(object):
         printed out or returned.
         """
         commands = self.get_virtualenv_setup_commands(cmd)
-        kwargs = self.get_subprocess_kwargs()
-
-        if return_result:
-            kwargs['stdout'] = subprocess.PIPE
-
-        process = subprocess.Popen('; '.join(commands), **kwargs)
-        stdout, stderr = process.communicate()
-
-        if stderr:
-            print stderr
-            self.kill_system()
-        if return_result:
-            return stdout
+        return self.execute('; '.join(commands), return_result)
 
 
     def get_virtualenv_setup_commands(self, cmd):
@@ -421,6 +432,12 @@ class BaseCommand(object):
                 result = self.project_name + "." + result
             elif not result:
                 result = self.project_name + ".settings.dev"
+
+        elif name == "requirements_file":
+            result = self.arg_or_cfg(name)
+
+            if not result:
+                result = "requirements_local.txt"
 
         elif name == "site_name":
             result = self.project_prefix + "-" + self.project_name

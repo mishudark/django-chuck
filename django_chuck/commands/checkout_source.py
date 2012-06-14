@@ -51,7 +51,7 @@ class Command(BaseCommand):
             raise ValueError("checkout_url is not defined")
 
         if not self.checkout_destdir:
-            self.checkout_destdir = tempfile.mkdtemp()
+            self.checkout_destdir = tempfile.mktemp()
 
         self.print_header("CHECKOUT SOURCE")
 

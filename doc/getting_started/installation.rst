@@ -14,6 +14,8 @@ Recommended
 
 * virtualenvwrapper
 
+Please not if you are using Debian, Ubuntu or Mint Linux you MUST install virtualenvwrapper using APT not pip otherwise it will be broken.
+
 
 Installation per pip
 ====================

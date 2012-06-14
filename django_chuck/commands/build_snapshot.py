@@ -13,19 +13,24 @@ class Command(BaseCommand):
         super(Command, self).handle(args, cfg)
 
         self.print_header("BUILD SNAPSHOT")
+
         output = self.execute_in_project('pip freeze', return_result=True).split('\n')
 
-        self.requirements = {}
-        for line in output:
-            if line == '':
-                continue
-            (app_name, version) = line.split("==")
-            self.requirements[app_name] = version
+        if output:
+            self.requirements = {}
+            for line in output:
+                if line == '':
+                    continue
+                (app_name, version) = line.split("==")
+                self.requirements[app_name] = version
 
-        self.update_requirement_file(os.path.join(self.site_dir, 'requirements/requirements_local.txt'))
-        self.update_requirement_file(os.path.join(self.site_dir, 'requirements/requirements_dev.txt'))
-        self.update_requirement_file(os.path.join(self.site_dir, 'requirements/requirements_live.txt'))
-        self.update_requirement_file(os.path.join(self.site_dir, 'requirements/requirements.txt'))
+            self.update_requirement_file(os.path.join(self.site_dir, 'requirements/requirements_local.txt'))
+            self.update_requirement_file(os.path.join(self.site_dir, 'requirements/requirements_dev.txt'))
+            self.update_requirement_file(os.path.join(self.site_dir, 'requirements/requirements_live.txt'))
+            self.update_requirement_file(os.path.join(self.site_dir, 'requirements/requirements.txt'))
+        else:
+            print "<<< Unable to build snapshot. pip freeze returned no result!"
+
 
     def update_requirement_file(self, file):
         """
@@ -44,4 +49,8 @@ class Command(BaseCommand):
             else:
                 index = line.find('\n')
             app_name = line[0:index]
-            print "%s==%s\n" % (app_name, self.requirements[app_name]),
+
+            if self.requirements.get(app_name):
+                print "%s==%s" % (app_name, self.requirements[app_name])
+            else:
+                print "%s" % (app_name,)

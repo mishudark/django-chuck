@@ -16,13 +16,20 @@ class Command(BaseCommand):
             "nargs": "?",
         }))
 
+        self.opts.append(("-rf", {
+            "help": "requirements file to use",
+            "dest": "requirements_file",
+            "default": "requirements_local.txt",
+            "nargs": "?",
+        }))
+
 
 
     def handle(self, args, cfg):
         super(Command, self).handle(args, cfg)
 
         self.print_header("INSTALL VIRTUALENV")
-        self.execute_in_project("pip install -r " + os.path.join(self.site_dir, "requirements", "requirements_local.txt"))
+        self.execute_in_project("pip install -r " + os.path.join(self.site_dir, "requirements", self.requirements_file))
 
         # Install additional apps
         if self.additional_apps:
