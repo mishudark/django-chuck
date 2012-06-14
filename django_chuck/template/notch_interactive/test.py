@@ -146,23 +146,42 @@ class TemplateEngineTest(unittest.TestCase):
     # ERRORS
     #
     def test_keyword_not_found(self):
-        with self.assertRaises(TemplateError):
+        try:
             self.engine.handle("django_chuck/template/notch_interactive/test/templates/broken_keyword.html", "django_chuck/template/notch_interactive/test/project_dir/broken_keyword.html", {})
+            test_failed = True
+        except TemplateError:
+            test_failed = False
 
+        self.assertFalse(test_failed)
 
     def test_syntax_error(self):
-        with self.assertRaises(TemplateError):
+        try:
             self.engine.handle("django_chuck/template/notch_interactive/test/templates/broken_syntax.html", "django_chuck/template/notch_interactive/test/project_dir/broken_syntax.html", {})
+            test_failed = True
+        except TemplateError:
+            test_failed = False
+
+        self.assertFalse(test_failed)
 
 
     def test_non_existent_block_name(self):
-        with self.assertRaises(TemplateError):
+        try:
             self.engine.handle("django_chuck/template/notch_interactive/test/templates/broken_block_name.html", "django_chuck/template/notch_interactive/test/project_dir/brocken_block_name.html", {})
+            test_failed = True
+        except TemplateError:
+            test_failed = False
+
+        self.assertFalse(test_failed)
 
 
     def test_non_existent_base_file(self):
-        with self.assertRaises(TemplateError):
+        try:
             self.engine.handle("django_chuck/template/notch_interactive/test/templates/broken_base_file.html", "django_chuck/template/notch_interactive/test/project_dir/broken_base_file.html", {})
+            test_failed = True
+        except TemplateError:
+            test_failed = False
+
+        self.assertFalse(test_failed)
 
     def test_non_existent_base_file_with_if_exists(self):
         self.engine.handle("django_chuck/template/notch_interactive/test/templates/broken_base_file_with_if_exists.html", "django_chuck/template/notch_interactive/test/project_dir/broken_base_file_with_if_exists.html", {})
