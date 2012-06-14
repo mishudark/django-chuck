@@ -79,8 +79,8 @@ class UtilsTest(unittest.TestCase):
 
         with open("django_chuck/test/project_dir/base.html", "r") as f:
             content = f.read()
-            self.assertIn("<html>", content)
-            self.assertIn("Hello Balle", content)
+            self.assertTrue("<html>" in content)
+            self.assertTrue("Hello Balle" in content)
 
 
     def test_compile_template_without_extension(self):
@@ -91,7 +91,7 @@ class UtilsTest(unittest.TestCase):
 
         with open("django_chuck/test/project_dir/placeholder.html", "r") as f:
             content = f.read()
-            self.assertIn("Hello Balle", content)
+            self.assertTrue("Hello Balle" in content)
 
 
 if __name__ == '__main__':

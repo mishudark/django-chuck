@@ -39,9 +39,9 @@ class ComandsTest(unittest.TestCase):
 
         cache = self.test_obj.get_module_cache()
 
-        self.assertIn("south", cache.keys())
+        self.assertTrue("south" in cache.keys())
         self.assertIs(type(cache["south"]), BaseModule)
-        self.assertIn("South is the defacto standard for database migrations in Django", cache["south"].get_description())
+        self.assertTrue("South is the defacto standard for database migrations in Django" in cache["south"].get_description())
 
 
     def test_clean_module_list_dependency(self):
@@ -53,7 +53,7 @@ class ComandsTest(unittest.TestCase):
         clean_modules = self.test_obj.clean_module_list(module_list, cache)
 
         self.assertIsNot(module_list, clean_modules)
-        self.assertIn("html5lib", clean_modules)
+        self.assertTrue("html5lib" in clean_modules)
 
     def test_clean_module_list_duplicates(self):
         self.test_obj.args = type("Argh", (object,), {})

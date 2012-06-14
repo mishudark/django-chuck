@@ -32,8 +32,8 @@ class TemplateEngineTest(unittest.TestCase):
 
         with open("django_chuck/template/notch_interactive/test/project_dir/base.html") as f:
             content = f.read()
-            self.assertIn("<html>", content)
-            self.assertIn("#!chuck_renders content", content)
+            self.assertTrue("<html>" in content)
+            self.assertTrue("#!chuck_renders content" in content)
 
 
     def test_render_multiple_blocks(self):
@@ -42,11 +42,11 @@ class TemplateEngineTest(unittest.TestCase):
 
         with open("django_chuck/template/notch_interactive/test/project_dir/base.html") as f:
             content = f.read()
-            self.assertIn("<html>", content)
-            self.assertIn("#!chuck_renders content", content)
-            self.assertIn("lets start", content)
-            self.assertIn("MOOOOOH", content)
-            self.assertIn("go home", content)
+            self.assertTrue("<html>" in content)
+            self.assertTrue("#!chuck_renders content" in content)
+            self.assertTrue("lets start" in content)
+            self.assertTrue("MOOOOOH" in content)
+            self.assertTrue("go home" in content)
 
 
     def test_appends(self):
@@ -82,7 +82,7 @@ class TemplateEngineTest(unittest.TestCase):
 
         with open("django_chuck/template/notch_interactive/test/project_dir/base.html") as f:
             content = f.read()
-            self.assertIn("cool things", content)
+            self.assertTrue("cool things" in content)
 
 
     def test_placeholder_without_extend(self):
@@ -91,7 +91,7 @@ class TemplateEngineTest(unittest.TestCase):
 
         with open("django_chuck/template/notch_interactive/test/project_dir/placeholder_without_extend.html") as f:
             content = f.read()
-            self.assertIn("cool things", content)
+            self.assertTrue("cool things" in content)
 
 
     def test_remove_keywords(self):
@@ -114,9 +114,9 @@ class TemplateEngineTest(unittest.TestCase):
 
         with open("django_chuck/template/notch_interactive/test/project_dir/common.py") as f:
             content = f.read()
-            self.assertIn("# -*- coding", content.splitlines()[0])  # right order
-            self.assertIn("CMS_TEMPLATES", content)                 # appends
-            self.assertIn("ROOT_URLCONF = 'test.urls'", content)    # placeholder
+            self.assertTrue("# -*- coding" in content.splitlines()[0])  # right order
+            self.assertTrue("CMS_TEMPLATES" in content)                 # appends
+            self.assertTrue("ROOT_URLCONF = 'test.urls'" in content)    # placeholder
             self.assertFalse("#!chuck" in content, content)         # removed keywords
 
 
@@ -132,13 +132,13 @@ class TemplateEngineTest(unittest.TestCase):
 
         with open("django_chuck/template/notch_interactive/test/project_dir/base.html") as f:
             content = f.read()
-            self.assertIn("big MOOOOOH", content)
-            self.assertIn("#!chuck_renders content", content)
+            self.assertTrue("big MOOOOOH" in content)
+            self.assertTrue("#!chuck_renders content" in content)
 
         with open("django_chuck/template/notch_interactive/test/project_dir/base2.html") as f:
             content = f.read()
-            self.assertIn("Balle was here", content)
-            self.assertIn("#!chuck_renders content", content)
+            self.assertTrue("Balle was here" in content)
+            self.assertTrue("#!chuck_renders content" in content)
 
 
 
