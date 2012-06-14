@@ -1,14 +1,9 @@
 #!/bin/sh
 
 # run unit tests
-cd django_chuck
-python test.py
-
-cd commands
-python test.py
-
-cd ../template/notch_interactive
-python test.py
+python django_chuck/test.py
+python django_chuck/commands/test.py
+python django_chuck/template/notch_interactive/test.py
 
 
 # test commands
