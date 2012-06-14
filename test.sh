@@ -10,7 +10,7 @@ python django_chuck/template/notch_interactive/test.py || exit 1
 chuck list_modules || exit 1
 chuck search_module cms || exit 1
 chuck show_info fabric || exit 1
-chuck create_project test test || exit 1
-chuck create_project test test django-cms,south,uwsgi,nginx || exit 1
+chuck create_project test core || exit 1
+chuck create_project test cms django-cms,south,uwsgi,nginx || exit 1
 
 exit 0

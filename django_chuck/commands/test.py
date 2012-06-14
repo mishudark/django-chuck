@@ -4,7 +4,7 @@ from mock import Mock
 from django_chuck.commands.base import BaseCommand
 
 
-class ComandsTest(unittest.TestCase):
+class CommandsTest(unittest.TestCase):
     def setUp(self):
         test_class = type("Test", (BaseCommand,), {})
         self.test_obj = test_class()
@@ -40,7 +40,7 @@ class ComandsTest(unittest.TestCase):
         cache = self.test_obj.get_module_cache()
 
         self.assertTrue("south" in cache.keys())
-        self.assertIs(type(cache["south"]), BaseModule)
+        self.assertEqual(cache["south"].__class__, BaseModule)
         self.assertTrue("South is the defacto standard for database migrations in Django" in cache["south"].get_description())
 
 
@@ -52,7 +52,6 @@ class ComandsTest(unittest.TestCase):
         module_list = ["django-cms"]
         clean_modules = self.test_obj.clean_module_list(module_list, cache)
 
-        self.assertIsNot(module_list, clean_modules)
         self.assertTrue("html5lib" in clean_modules)
 
     def test_clean_module_list_duplicates(self):
