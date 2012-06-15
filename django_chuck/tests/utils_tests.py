@@ -2,14 +2,14 @@ import os
 import sys
 import shutil
 import unittest
-import utils
+from django_chuck import utils
 import django_chuck.template.base
 from django_chuck.exceptions import TemplateError
 
 
 class UtilsTest(unittest.TestCase):
     def setUp(self):
-        self.test_file = os.path.join("django_chuck", "test", "project_dir", "test_file")
+        self.test_file = os.path.join("django_chuck", "tests", "project_dir", "test_file")
 
         if os.path.isfile(self.test_file):
             os.unlink(self.test_file)
@@ -65,19 +65,19 @@ class UtilsTest(unittest.TestCase):
 
     def test_get_template_engine(self):
         sys.path.insert(0, ".")
-        obj = utils.get_template_engine("django_chuck/test", "django_chuck/test/project_dir")
+        obj = utils.get_template_engine("django_chuck/tests", "django_chuck/test/project_dir")
         self.assertTrue(issubclass(obj.__class__, django_chuck.template.base.BaseEngine))
 
 
     def test_compile_template_with_extension(self):
-        shutil.copy("django_chuck/test/templates/base.html", "django_chuck/test/project_dir/base.html")
+        shutil.copy("django_chuck/tests/templates/base.html", "django_chuck/tests/project_dir/base.html")
         placeholder = {"WHO": "Balle"}
 
-        result = utils.compile_template("django_chuck/test/templates/site.html", "django_chuck/test/project_dir/site.html", placeholder, "test", "django_chuck/test/project_dir")
+        result = utils.compile_template("django_chuck/tests/templates/site.html", "django_chuck/tests/project_dir/site.html", placeholder, "tests", "django_chuck/tests/project_dir")
         self.assertTrue(result)
-        self.assertFalse(os.path.isfile("django_chuck/test/project_dir/site.html"))
+        self.assertFalse(os.path.isfile("django_chuck/tests/project_dir/site.html"))
 
-        with open("django_chuck/test/project_dir/base.html", "r") as f:
+        with open("django_chuck/tests/project_dir/base.html", "r") as f:
             content = f.read()
             self.assertTrue("<html>" in content)
             self.assertTrue("Hello Balle" in content)
@@ -86,10 +86,10 @@ class UtilsTest(unittest.TestCase):
     def test_compile_template_without_extension(self):
         placeholder = {"WHO": "Balle"}
 
-        result = utils.compile_template("django_chuck/test/templates/placeholder.html", "django_chuck/test/project_dir/placeholder.html", placeholder, "test", "django_chuck/test/project_dir")
-        self.assertTrue(os.path.isfile("django_chuck/test/project_dir/placeholder.html"))
+        result = utils.compile_template("django_chuck/tests/templates/placeholder.html", "django_chuck/tests/project_dir/placeholder.html", placeholder, "tests", "django_chuck/tests/project_dir")
+        self.assertTrue(os.path.isfile("django_chuck/tests/project_dir/placeholder.html"))
 
-        with open("django_chuck/test/project_dir/placeholder.html", "r") as f:
+        with open("django_chuck/tests/project_dir/placeholder.html", "r") as f:
             content = f.read()
             self.assertTrue("Hello Balle" in content)
 
