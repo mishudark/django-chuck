@@ -17,10 +17,13 @@ $PROJECT_NAME              The name of the project
 $SITE_NAME                 Concatenation of project prefix and name
 $MODULE_BASEDIR            The full path to the module directory
 $PROJECT_BASEDIR           Local directory where Chuck shall create new projects
+$PROJECT_DIR               Full path to the local project directory
 $PYTHON_VERSION            The version of the Python interpreter (e.g. 2.7)
 $SERVER_PROJECT_BASEDIR    Directory where all you projects are stored on your server (used for fab file)
 $SERVER_VIRTUALENV_BASEDIR Directory where all you virtualenvs are stored on your server (used for fab file)
+$SITE_DIR                  Full path to the local site directory
 $VIRTUALENV_BASEDIR        Local directory where Chuck shall create virtualenvs
+$VIRTUALENV_DIR            Full path og the local projects virtualenv directory
 ========================== =============
 
 A template that should be expandable needs an ``#!chuck_renders`` block. Its common practice to write block names in uppercase and they cannot contain spaces.

@@ -213,10 +213,13 @@ def get_placeholder(args, cfg):
         "SITE_NAME": get_property("site_name", args, cfg),
         "MODULE_BASEDIR": get_property("module_basedir", args, cfg),
         "PYTHON_VERSION": get_property("python_version", args, cfg),
+        "PROJECT_DIR": get_property("project_dir", args, cfg),
         "PROJECT_BASEDIR": get_property("project_basedir", args, cfg),
+        "VIRTUALENV_DIR": get_property("virtualenv_dir", args, cfg),
         "VIRTUALENV_BASEDIR": get_property("virtualenv_basedir", args, cfg),
         "SERVER_PROJECT_BASEDIR": get_property("server_project_basedir", args, cfg),
         "SERVER_VIRTUALENV_BASEDIR": get_property("server_virtualenv_basedir", args, cfg),
+        "SITE_DIR": get_property("site_dir", args, cfg),
         "EMAIL_DOMAIN": get_property("email_domain", args, cfg),
         "MODULES": ','.join(get_property("modules_to_install)", args, cfg)),
     }
@@ -289,7 +292,7 @@ def compile_template(input_file, output_file, placeholder, site_dir, project_dir
        output_file.endswith(".mo"):
         return None
 
-    if issubclass(engine_obj.__class__, django_chuck.template.base.BaseEngine):
+    if engine_obj and issubclass(engine_obj.__class__, django_chuck.template.base.BaseEngine):
         engine = engine_obj
     else:
         engine = get_template_engine(site_dir, project_dir)
