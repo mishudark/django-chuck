@@ -60,22 +60,6 @@ class Command(BaseCommand):
         self.placeholder = get_placeholder(self.args, self.cfg)
 
 
-        # Project exists
-        if os.path.exists(self.site_dir) and not cfg.get("updating"):
-            self.print_header("EXISTING PROJECT " + self.site_dir)
-            answer = raw_input("Delete old project dir? <y/N>: ")
-
-            if answer.lower() == "y" or answer.lower() == "j":
-                shutil.rmtree(self.site_dir)
-                os.makedirs(self.site_dir)
-            else:
-                print "Aborting."
-                sys.exit(0)
-
-        # Building a new project
-        else:
-            os.makedirs(self.site_dir)
-
         # Clean module list
         self.modules_to_install = self.clean_module_list(self.modules_to_install, self.module_cache)
 
