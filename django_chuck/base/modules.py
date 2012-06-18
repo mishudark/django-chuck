@@ -81,7 +81,7 @@ class BaseModule(object):
                 shutil.move(os.path.join(self.site_dir, ".gitignore_" + self.project_name), os.path.join(self.site_dir, ".gitignore"))
 
         # Shall we execute module post build action?
-        if kwargs.get("exec_post_build", False) and hasattr(self, "post_build"):
+        if kwargs.get("exec_post_build", False) and self.meta_data:
             self.meta_data = utils.inject_variables_and_functions(self.meta_data, self.args, self.cfg)
             self.meta_data.post_build()
 
