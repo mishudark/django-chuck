@@ -42,7 +42,6 @@ You can also add other Python module with a version number like for using pip
   chuck create_project <project_prefix> <project_name> unittest,jenkins -a django-social-auth==0.6.9
 
 
-
 Setup an existing project
 =========================
 
@@ -70,3 +69,12 @@ For example if you use a Git repository you simply execute the following:
 .. note::
    As for now, this process is only supported for projects which got created through Django Chuck or contain a
    valid ``chuck_setup.py`` file. We plan to make this work on non-Chuck projects in the near future though.
+
+
+Serve your project using Vagrant
+================================
+
+Or maybe you also want to build a Virtualbox using Vagrant to serve your newly created project.
+Just set ``use_vagrant`` to ``True`` in your config file and maybe specify a vagrant box with ``vagrant_box`` otherwise http://files.vagrantup.com/lucid32.box will be used as a default.
+
+Please note that you are responsibly for installing and configuring your box image. Chuck will only create a Vagrantfile for you sharing the virtualenv and site directory and automatically create a box with Vagrant for you.

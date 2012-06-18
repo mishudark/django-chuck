@@ -17,6 +17,15 @@ default_modules=["core", "south"]
 # use virtualenvwrapper?
 use_virtualenvwrapper = False
 
+# use vagrant?
+use_vagrant = False
+
+# which vagrant box to install
+vagrant_box = "http://files.vagrantup.com/lucid32.box"
+
+# additional commands to execute after vagrant setup
+vagrant_commands = ""
+
 # default django settings module to use
 # project_name will be automatically prepended
 django_settings = "settings.dev"

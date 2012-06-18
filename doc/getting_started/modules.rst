@@ -47,6 +47,7 @@ twitter-bootstrap                                                             Th
 unittest                                                                      A collection of apps that make your TDD life a lot more easier.
 uwsgi                                                                         Generates a config and app file for your `uWSGI <http://projects.unbit.it/uwsgi/>`_ deployment
 uwsgi-cherokee                                                                Generate a uwsgi config to be used in Cherokee webserver
+vagrant                                                                       Create a Vagrantfile to serve the constructed project on a Vritualbox using `Vagrant <http://www.vagrantup.com>`_.
 ============================================================================= ==========================
 
 A few words about...

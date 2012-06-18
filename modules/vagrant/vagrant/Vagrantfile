@@ -1,0 +1,6 @@
+Vagrant::Config.run do |config|
+    config.vm.box = "$PROJECT_NAME_box"
+    config.vm.forward_port 80, 8888
+    config.vm.share_folder "virtualenv", "/virtualenv", "$VIRTUALENV_DIR"
+    config.vm.share_folder "site-root", "/site", "$SITE_DIR"
+end

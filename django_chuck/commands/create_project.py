@@ -1,3 +1,6 @@
+import os
+import sys
+import shutil
 from django_chuck.commands.base import BaseCommand
 from django_chuck.commands import create_virtualenv, install_modules, install_virtualenv, create_database, build_snapshot, create_vagrant
 
@@ -23,8 +26,24 @@ class Command(BaseCommand):
     def handle(self, args, cfg):
         super(Command, self).handle(args, cfg)
 
-        #if self.use_vagrant:
-        #    create_vagrant.Command().handle(args, cfg)
+        # Project exists
+        if os.path.exists(self.site_dir) and os.path.exists(self.project_dir):
+            self.print_header("EXISTING PROJECT " + self.site_dir)
+            answer = raw_input("Delete old project dir? <y/N>: ")
+
+            if answer.lower() == "y" or answer.lower() == "j":
+                shutil.rmtree(self.site_dir)
+                os.makedirs(self.site_dir)
+            else:
+                print "Aborting."
+                sys.exit(0)
+
+        # Building a new project
+        else:
+            os.makedirs(self.site_dir)
+
+        if self.use_vagrant:
+            create_vagrant.Command().handle(args, cfg)
 
         create_virtualenv.Command().handle(args, cfg)
         install_modules.Command().handle(args, cfg)
