@@ -1,5 +1,5 @@
 from django_chuck.commands.base import BaseCommand
-from django_chuck.commands import create_virtualenv, install_modules, install_virtualenv, create_database, build_snapshot
+from django_chuck.commands import create_virtualenv, install_modules, install_virtualenv, create_database, build_snapshot, create_vagrant
 
 class Command(BaseCommand):
     help = "Start a new project"
@@ -22,6 +22,9 @@ class Command(BaseCommand):
 
     def handle(self, args, cfg):
         super(Command, self).handle(args, cfg)
+
+        #if self.use_vagrant:
+        #    create_vagrant.Command().handle(args, cfg)
 
         create_virtualenv.Command().handle(args, cfg)
         install_modules.Command().handle(args, cfg)

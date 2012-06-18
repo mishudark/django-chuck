@@ -7,7 +7,7 @@ import sys
 from signal import signal, SIGINT, SIGILL, SIGTERM, SIGSEGV, SIGABRT, SIGQUIT
 from random import choice
 from django_chuck.base.modules import BaseModule
-#from django_chuck.base import constants
+from django_chuck import utils
 
 
 # The base class for all commands
@@ -151,19 +151,7 @@ class BaseCommand(object):
 
 
     def arg_or_cfg(self, var):
-        """
-        Get the value of an parameter or config setting
-        """
-        try:
-            result = getattr(self.args, var)
-        except AttributeError:
-            result = None
-
-        if not result:
-            result = self.cfg.get(var, "")
-
-        return result
-
+        return utils.arg_or_cfg(var, self.args, self.cfg)
 
     def insert_default_modules(self, module_list):
         """
@@ -220,11 +208,13 @@ class BaseCommand(object):
             for module in os.listdir(module_basedir):
                 module_dir = os.path.join(module_basedir, module)
                 if os.path.isdir(module_dir) and module not in module_cache.keys():
-                    module_cache[module] = BaseModule(module, module_dir)
+                    module_cache[module] = BaseModule(module, self.args, self.cfg, module_dir)
                     # TODO: Ignore list for folders and filenames
-                    if module_cache[module].cfg:
-                        self.inject_variables_and_functions(module_cache[module].cfg)
+                    if module_cache[module].get_post_build():
+                        self.inject_variables_and_functions(module_cache[module].get_post_build())
+
         return module_cache
+
 
     def clean_module_list(self, module_list, module_cache):
         """
@@ -388,88 +378,11 @@ class BaseCommand(object):
         """
         Get value either from command-line argument or config setting
         """
-        result = None
-
-        if name == "cfg":
-            result = self.cfg
-        elif name == "args":
-            result = self.args
-
-        elif name == "project_prefix":
-            result = self.arg_or_cfg(name).replace("-", "_")
-
-        elif name == "project_name":
-            result = self.arg_or_cfg(name).replace("-", "_")
-
-        elif name == "virtualenv_dir":
-            result = os.path.join(os.path.expanduser(self.virtualenv_basedir), self.project_prefix + "-" + self.project_name)
-
-        elif name == "site_dir":
-            result = os.path.join(os.path.expanduser(self.project_basedir), self.project_prefix + "-" + self.project_name)
-
-        elif name == "project_dir":
-            result = os.path.join(self.site_dir, self.project_name)
-
-        elif name == "delete_project_on_failure":
-            result = self.arg_or_cfg(name)
-
-        elif name == "server_project_basedir":
-            result = self.arg_or_cfg(name)
-
-            if not result:
-                result = "CHANGEME"
-
-        elif name == "server_virtualenv_basedir":
-            result = self.arg_or_cfg(name)
-
-            if not result:
-                result = "CHANGEME"
-
-        elif name == "django_settings":
-            result = self.arg_or_cfg(name)
-
-            if result and not result.startswith(self.project_name):
-                result = self.project_name + "." + result
-            elif not result:
-                result = self.project_name + ".settings.dev"
-
-        elif name == "requirements_file":
-            result = self.arg_or_cfg(name)
-
-            if not result:
-                result = "requirements_local.txt"
-
-        elif name == "site_name":
-            result = self.project_prefix + "-" + self.project_name
-
-        elif name == "python_version":
-            result = self.arg_or_cfg(name)
-
-            if not result:
-                result = sys.version[0:3]
-
-        elif name == "module_basedirs":
-            result = self.arg_or_cfg(name)
-
-            if result and "." in result:
-                result[result.index(".")] = self.module_basedir
-            elif not result:
-                result = [self.module_basedir]
-
-        else:
-            result = self.arg_or_cfg(name)
-
-        return result
+        return utils.get_property(name, self.args, self.cfg)
 
 
     def print_header(self, msg):
-        """
-        Print a header message
-        """
-        print "\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
-        print "[PHASE]: " + msg
-        print "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n"
-
+        utils.print_header(msg)
 
     def kill_system(self):
         """
@@ -493,23 +406,7 @@ class BaseCommand(object):
         Inject variables and functions to a class
         Used for chuck_setup and chuck_module helpers
         """
-        # inject variables
-        setattr(victim_class, "virtualenv_dir", self.virtualenv_dir)
-        setattr(victim_class, "site_dir", self.site_dir)
-        setattr(victim_class, "project_dir", os.path.join(self.site_dir, self.project_name))
-        setattr(victim_class, "project_name", self.project_name)
-        setattr(victim_class, "site_name", self.site_name)
-        #setattr(victim_class, "HIGH", constants.HIGH)
-        #setattr(victim_class, "MEDIUM", constants.MEDIUM)
-        #setattr(victim_class, "LOW", constants.LOW)
-
-        # inject functions
-        setattr(victim_class, "execute_in_project", self.execute_in_project)
-        setattr(victim_class, "db_cleanup", self.db_cleanup)
-        setattr(victim_class, "load_fixtures", self.load_fixtures)
-
-
-        return victim_class
+        return utils.inject_variables_and_functions(victim_class, self.args, self.cfg)
 
 
     def handle(self, args, cfg):

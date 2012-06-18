@@ -2,7 +2,7 @@ from django_chuck.commands.base import BaseCommand
 import os
 import sys
 import shutil
-from django_chuck.utils import append_to_file, get_files, get_template_engine, compile_template
+from django_chuck.utils import append_to_file, get_files, get_template_engine, compile_template, get_placeholder
 from random import choice
 
 class Command(BaseCommand):
@@ -32,41 +32,15 @@ class Command(BaseCommand):
     def install_module(self, module_name):
         module = self.module_cache.get(module_name, None)
 
-        # Module has post build action? Remember it
-        if module.cfg:
-            cfg = self.inject_variables_and_functions(module.cfg)
-            setattr(cfg, "installed_modules", self.installed_modules)
-            if module.post_build:
-                self.post_build_actions.append((module.name, module.post_build))
+        if module.name not in self.installed_modules:
+            # Module has post build action? Remember it
+            if module.get_post_build():
+                self.inject_variables_and_functions(module.meta_data)
+                setattr(module.get_post_build(), "installed_modules", self.installed_modules)
+                self.post_build_actions.append((module.name, module.get_post_build()))
 
-        self.print_header("BUILDING " + module.name)
-        self.installed_modules.append(module)
-
-        # For each file in the module dir
-        for f in get_files(module.dir):
-            if not "chuck_module.py" in f:
-                # Absolute path to module file
-                input_file = f
-
-                # Relative path to module file
-                rel_path_old = f.replace(module.dir, "")
-
-                # Relative path to module file with project_name replaced
-                rel_path_new = f.replace(module.dir, "").replace("project", self.project_name)
-
-                # Absolute path to module file in site dir
-                output_file = f.replace(module.dir, self.site_dir).replace(rel_path_old, rel_path_new)
-
-                # Apply templates
-                print "\t%s -> %s" % (input_file, output_file)
-                compile_template(input_file, output_file, self.placeholder, self.site_dir, self.project_dir, self.template_engine, self.debug)
-
-        if module == "core":
-            secret_key = ''.join([choice('abcdefghijklmnopqrstuvwxyz0123456789!@%^&*(-_=+)') for i in range(50)])
-            shutil.move(os.path.join(self.site_dir, ".gitignore_" + self.project_name), os.path.join(self.site_dir, ".gitignore"))
-            append_to_file(os.path.join(self.project_dir, "settings", "common.py"), "\nSECRET_KEY = '" + secret_key + "'\n")
-
-        self.installed_modules.append(module.name)
+            module.install()
+            self.installed_modules.append(module.name)
 
 
     def handle(self, args, cfg):
@@ -83,19 +57,7 @@ class Command(BaseCommand):
         # The template engine that is used to compile the project files
         template_engine = get_template_engine(self.site_dir, self.project_dir, cfg.get("template_engine"))
 
-        self.placeholder = {
-            "PROJECT_PREFIX": self.project_prefix,
-            "PROJECT_NAME": self.project_name,
-            "SITE_NAME": self.site_name,
-            "MODULE_BASEDIR": self.module_basedir,
-            "PYTHON_VERSION": self.python_version,
-            "PROJECT_BASEDIR": self.project_basedir,
-            "VIRTUALENV_BASEDIR": self.virtualenv_basedir,
-            "SERVER_PROJECT_BASEDIR": self.server_project_basedir,
-            "SERVER_VIRTUALENV_BASEDIR": self.server_virtualenv_basedir,
-            "EMAIL_DOMAIN": self.email_domain,
-            "MODULES": ','.join(self.modules_to_install),
-        }
+        self.placeholder = get_placeholder(self.args, self.cfg)
 
 
         # Project exists
@@ -139,7 +101,6 @@ class Command(BaseCommand):
         if self.post_build_actions:
             self.print_header("EXECUTING POST BUILD ACTIONS")
 
-
             for action in self.post_build_actions:
                 print ">>> " + action[0]
                 try:
@@ -148,5 +109,3 @@ class Command(BaseCommand):
                 except Exception, e:
                     print str(e)
                     self.kill_system()
-
-

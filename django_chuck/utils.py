@@ -116,6 +116,143 @@ def autoload_commands(subparsers, cfg, command_list):
     return True
 
 
+def arg_or_cfg(var, args, cfg):
+    """
+    Get the value of an parameter or config setting
+    """
+    try:
+        result = getattr(args, var)
+    except AttributeError:
+        result = None
+
+    if not result:
+        result = cfg.get(var, "")
+
+    return result
+
+
+def get_property(name, args, cfg):
+    result = None
+
+    if name == "cfg":
+        result = cfg
+    elif name == "args":
+        result = args
+
+    elif name == "project_prefix":
+        result = arg_or_cfg(name, args, cfg).replace("-", "_")
+
+    elif name == "project_name":
+        result = arg_or_cfg(name, args, cfg).replace("-", "_")
+
+    elif name == "virtualenv_dir":
+        result = os.path.join(os.path.expanduser(get_property("virtualenv_basedir", args, cfg)), get_property("project_prefix", args, cfg) + "-" + get_property("project_name", args, cfg))
+
+    elif name == "site_dir":
+        result = os.path.join(os.path.expanduser(get_property("project_basedir", args, cfg)), get_property("project_prefix", args, cfg) + "-" + get_property("project_name", args, cfg))
+
+    elif name == "project_dir":
+        result = os.path.join(get_property("site_dir", args, cfg), get_property("project_name", args, cfg))
+
+    elif name == "delete_project_on_failure":
+        result = arg_or_cfg(name, args, cfg)
+
+    elif name == "server_project_basedir":
+        result = arg_or_cfg(name, args, cfg)
+
+        if not result:
+            result = "CHANGEME"
+
+    elif name == "server_virtualenv_basedir":
+        result = arg_or_cfg(name, args, cfg)
+
+        if not result:
+            result = "CHANGEME"
+
+    elif name == "django_settings":
+        result = arg_or_cfg(name, args, cfg)
+
+        if result and not result.startswith(get_property("project_name", args, cfg)):
+            result = get_property("project_name", args, cfg) + "." + result
+        elif not result:
+            result = get_property("project_name", args, cfg) + ".settings.dev"
+
+    elif name == "requirements_file":
+        result = arg_or_cfg(name, args, cfg)
+
+        if not result:
+            result = "requirements_local.txt"
+
+    elif name == "site_name":
+        result = get_property("project_prefix", args, cfg) + "-" + get_property("project_name", args, cfg)
+
+    elif name == "python_version":
+        result = arg_or_cfg(name, args, cfg)
+
+        if not result:
+            result = sys.version[0:3]
+
+    elif name == "module_basedirs":
+        result = arg_or_cfg(name, args, cfg)
+
+        if result and "." in result:
+            result[result.index(".")] = get_property("module_basedir", args, cfg)
+        elif not result:
+            result = [get_property("module_basedir", args, cfg)]
+
+    else:
+        result = arg_or_cfg(name, args, cfg)
+
+    return result
+
+
+def get_placeholder(args, cfg):
+    placeholder = {
+        "PROJECT_PREFIX": get_property("project_prefix", args, cfg),
+        "PROJECT_NAME": get_property("project_name", args, cfg),
+        "SITE_NAME": get_property("site_name", args, cfg),
+        "MODULE_BASEDIR": get_property("module_basedir", args, cfg),
+        "PYTHON_VERSION": get_property("python_version", args, cfg),
+        "PROJECT_BASEDIR": get_property("project_basedir", args, cfg),
+        "VIRTUALENV_BASEDIR": get_property("virtualenv_basedir", args, cfg),
+        "SERVER_PROJECT_BASEDIR": get_property("server_project_basedir", args, cfg),
+        "SERVER_VIRTUALENV_BASEDIR": get_property("server_virtualenv_basedir", args, cfg),
+        "EMAIL_DOMAIN": get_property("email_domain", args, cfg),
+        "MODULES": ','.join(get_property("modules_to_install)", args, cfg)),
+    }
+
+    return placeholder
+
+
+def inject_variables_and_functions(victim_class, args, cfg):
+    """
+    Inject variables and functions to a class
+    Used for chuck_setup and chuck_module helpers
+    """
+    # inject variables
+    setattr(victim_class, "virtualenv_dir", get_property("virtualenv_dir", args, cfg))
+    setattr(victim_class, "site_dir", get_property("site_dir", args, cfg))
+    setattr(victim_class, "project_dir", get_property("project_dir", args, cfg))
+    setattr(victim_class, "project_name", get_property("project_name", args, cfg))
+    setattr(victim_class, "site_name", get_property("site_name", args, cfg))
+
+    # inject functions
+    setattr(victim_class, "execute_in_project", get_property("execute_in_project", args, cfg))
+    setattr(victim_class, "db_cleanup", get_property("db_cleanup", args, cfg))
+    setattr(victim_class, "load_fixtures", get_property("load_fixtures", args, cfg))
+
+    return victim_class
+
+
+def print_header(msg):
+    """
+    Print a header message
+    """
+    print "\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+    print "[PHASE]: " + msg
+    print "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n"
+
+
 def get_template_engine(site_dir, project_dir, engine_module=None):
     """
     Get template engine instance
