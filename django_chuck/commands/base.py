@@ -6,6 +6,7 @@ from signal import signal, SIGINT, SIGILL, SIGTERM, SIGSEGV, SIGABRT, SIGQUIT
 from random import choice
 from django_chuck.base.modules import BaseModule
 from django_chuck.exceptions import ShellError
+from django_chuck.settings import Settings
 from django_chuck import utils
 
 
@@ -46,11 +47,7 @@ class BaseCommand(object):
         signal(SIGSEGV, self.got_killed)
         signal(SIGTERM, self.got_killed)
 
-        # command arguments will override cfg
-        self.args = None
-
-        # config settings
-        self.cfg = None
+        self.settings = None
 
         # dont check that project prefix and name exist?
         self.no_default_checks = False
@@ -149,10 +146,6 @@ class BaseCommand(object):
         ]
 
 
-    def arg_or_cfg(self, var):
-        return utils.arg_or_cfg(var, self.args, self.cfg)
-
-
     def execute(self, command, return_result=False):
         """
         Execute a command without loading virtualenv and django settings
@@ -169,7 +162,7 @@ class BaseCommand(object):
         result = ""
 
         try:
-            result = utils.execute_in_project(cmd, self.args, self.cfg, return_result)
+            result = utils.execute_in_project(cmd, self.settings, return_result)
         except ShellError:
             self.got_killed()
 
@@ -219,6 +212,7 @@ class BaseCommand(object):
 
         return install_modules
 
+
     def get_module_cache(self):
         """
         Return dict of modules with key module name and value base module
@@ -231,7 +225,7 @@ class BaseCommand(object):
             for module in os.listdir(module_basedir):
                 module_dir = os.path.join(module_basedir, module)
                 if os.path.isdir(module_dir) and module not in module_cache.keys():
-                    module_cache[module] = BaseModule(module, self.args, self.cfg, module_dir)
+                    module_cache[module] = BaseModule(module, self.settings, module_dir)
                     # TODO: Ignore list for folders and filenames
                     if module_cache[module].get_post_build():
                         self.inject_variables_and_functions(module_cache[module].get_post_build())
@@ -289,7 +283,7 @@ class BaseCommand(object):
         """
         Get value either from command-line argument or config setting
         """
-        return utils.get_property(name, self.args, self.cfg)
+        return getattr(self.settings, name)
 
 
     def print_header(self, msg):
@@ -308,15 +302,14 @@ class BaseCommand(object):
         Inject variables and functions to a class
         Used for chuck_setup and chuck_module helpers
         """
-        return utils.inject_variables_and_functions(victim_class, self.args, self.cfg)
+        return utils.inject_variables_and_functions(victim_class, self.settings)
 
 
     def handle(self, args, cfg):
         """
         This method includes the commands functionality
         """
-        self.args = args
-        self.cfg = cfg
+        self.settings = Settings(args=args, cfg=cfg)
 
         if not self.no_default_checks:
             if not self.project_prefix:

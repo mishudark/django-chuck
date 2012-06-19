@@ -92,7 +92,7 @@ def find_commands():
     return commands
 
 
-def autoload_commands(subparsers, cfg, command_list):
+def autoload_commands(subparsers, settings, command_list):
     """
     Load all commands in command_list and create argument parsers
     """
@@ -112,122 +112,12 @@ def autoload_commands(subparsers, cfg, command_list):
                 print str(e)
                 sys.exit(0)
 
-
-            handle_cmd = functools.partial(cmd.handle, cfg=cfg)
+            handle_cmd = functools.partial(cmd.handle, cfg=settings.cfg)
             cmd_parser.set_defaults(func=handle_cmd)
 
     return True
 
 
-def arg_or_cfg(var, args, cfg):
-    """
-    Get the value of an parameter or config setting
-    """
-    try:
-        result = getattr(args, var)
-    except AttributeError:
-        result = None
-
-    if not result:
-        result = cfg.get(var, "")
-
-    return result
-
-
-def get_property(name, args, cfg):
-    result = None
-
-    if name == "cfg":
-        result = cfg
-    elif name == "args":
-        result = args
-
-    elif name == "project_prefix":
-        result = arg_or_cfg(name, args, cfg).replace("-", "_")
-
-    elif name == "project_name":
-        result = arg_or_cfg(name, args, cfg).replace("-", "_")
-
-    elif name == "virtualenv_dir":
-        result = os.path.join(os.path.expanduser(get_property("virtualenv_basedir", args, cfg)), get_property("project_prefix", args, cfg) + "-" + get_property("project_name", args, cfg))
-
-    elif name == "site_dir":
-        result = os.path.join(os.path.expanduser(get_property("project_basedir", args, cfg)), get_property("project_prefix", args, cfg) + "-" + get_property("project_name", args, cfg))
-
-    elif name == "project_dir":
-        result = os.path.join(get_property("site_dir", args, cfg), get_property("project_name", args, cfg))
-
-    elif name == "delete_project_on_failure":
-        result = arg_or_cfg(name, args, cfg)
-
-    elif name == "server_project_basedir":
-        result = arg_or_cfg(name, args, cfg)
-
-        if not result:
-            result = "CHANGEME"
-
-    elif name == "server_virtualenv_basedir":
-        result = arg_or_cfg(name, args, cfg)
-
-        if not result:
-            result = "CHANGEME"
-
-    elif name == "django_settings":
-        result = arg_or_cfg(name, args, cfg)
-
-        if result and not result.startswith(get_property("project_name", args, cfg)):
-            result = get_property("project_name", args, cfg) + "." + result
-        elif not result:
-            result = get_property("project_name", args, cfg) + ".settings.dev"
-
-    elif name == "requirements_file":
-        result = arg_or_cfg(name, args, cfg)
-
-        if not result:
-            result = "requirements_local.txt"
-
-    elif name == "site_name":
-        result = get_property("project_prefix", args, cfg) + "-" + get_property("project_name", args, cfg)
-
-    elif name == "python_version":
-        result = arg_or_cfg(name, args, cfg)
-
-        if not result:
-            result = sys.version[0:3]
-
-    elif name == "module_basedirs":
-        result = arg_or_cfg(name, args, cfg)
-
-        if result and "." in result:
-            result[result.index(".")] = get_property("module_basedir", args, cfg)
-        elif not result:
-            result = [get_property("module_basedir", args, cfg)]
-
-    else:
-        result = arg_or_cfg(name, args, cfg)
-
-    return result
-
-
-def get_placeholder(args, cfg):
-    placeholder = {
-        "PROJECT_PREFIX": get_property("project_prefix", args, cfg),
-        "PROJECT_NAME": get_property("project_name", args, cfg),
-        "SITE_NAME": get_property("site_name", args, cfg),
-        "MODULE_BASEDIR": get_property("module_basedir", args, cfg),
-        "PYTHON_VERSION": get_property("python_version", args, cfg),
-        "PROJECT_DIR": get_property("project_dir", args, cfg),
-        "PROJECT_BASEDIR": get_property("project_basedir", args, cfg),
-        "VIRTUALENV_DIR": get_property("virtualenv_dir", args, cfg),
-        "VIRTUALENV_BASEDIR": get_property("virtualenv_basedir", args, cfg),
-        "SERVER_PROJECT_BASEDIR": get_property("server_project_basedir", args, cfg),
-        "SERVER_VIRTUALENV_BASEDIR": get_property("server_virtualenv_basedir", args, cfg),
-        "SITE_DIR": get_property("site_dir", args, cfg),
-        "EMAIL_DOMAIN": get_property("email_domain", args, cfg),
-        "MODULES": ','.join(get_property("modules_to_install)", args, cfg)),
-    }
-
-    return placeholder
 
 
 def get_subprocess_kwargs():
@@ -263,27 +153,27 @@ def execute(command, return_result=False):
             raise ShellError("Command " + command)
 
 
-def get_virtualenv_setup_commands(cmd, args, cfg):
-    if get_property("use_virtualenvwrapper", args, cfg):
+def get_virtualenv_setup_commands(cmd, settings):
+    if settings.use_virtualenvwrapper:
         commands = [
             '. virtualenvwrapper.sh',
-            'workon ' + get_property("site_name", args, cfg),
+            'workon ' + settings.site_name,
             ]
     else:
         commands = [
-            '. ' + os.path.join(os.path.expanduser(get_property("virtualenv_dir", args, cfg)), "bin", "activate"),
+            '. ' + os.path.join(os.path.expanduser(settings.virtualenv_dir), "bin", "activate"),
             ]
     commands.append(cmd)
     return commands
 
 
-def execute_in_project(cmd, args, cfg, return_result=False):
+def execute_in_project(cmd, settings, return_result=False):
     """
     Execute a shell command after loading virtualenv and loading django settings.
     Parameter return_result decides whether the shell command output should get
     printed out or returned.
     """
-    commands = get_virtualenv_setup_commands(cmd, args, cfg)
+    commands = get_virtualenv_setup_commands(cmd, settings)
     return execute('; '.join(commands), return_result)
 
 
@@ -344,20 +234,20 @@ def load_fixtures(fixture_file):
     execute_in_project("django-admin.py loaddata " + fixture_file)
 
 
-def inject_variables_and_functions(victim_class, args, cfg):
+def inject_variables_and_functions(victim_class, settings):
     """
     Inject variables and functions to a class
     Used for chuck_setup and chuck_module helpers
     """
     # inject variables
-    setattr(victim_class, "virtualenv_dir", get_property("virtualenv_dir", args, cfg))
-    setattr(victim_class, "site_dir", get_property("site_dir", args, cfg))
-    setattr(victim_class, "project_dir", get_property("project_dir", args, cfg))
-    setattr(victim_class, "project_name", get_property("project_name", args, cfg))
-    setattr(victim_class, "site_name", get_property("site_name", args, cfg))
+    setattr(victim_class, "virtualenv_dir", settings.virtualenv_dir)
+    setattr(victim_class, "site_dir", settings.site_dir)
+    setattr(victim_class, "project_dir", settings.project_dir)
+    setattr(victim_class, "project_name", settings.project_name)
+    setattr(victim_class, "site_name", settings.site_name)
 
     # inject functions
-    setattr(victim_class, "execute_in_project", functools.partial(execute_in_project, args=args, cfg=cfg))
+    setattr(victim_class, "execute_in_project", functools.partial(execute_in_project, settings=settings))
     setattr(victim_class, "db_cleanup", db_cleanup)
     setattr(victim_class, "load_fixtures", load_fixtures)
 

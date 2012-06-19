@@ -14,21 +14,14 @@ import os
 import sys
 import argparse
 from random import choice
-from django_chuck.utils import find_commands, autoload_commands, find_chuck_module_path
+from django_chuck.settings import Settings
+from django_chuck.utils import find_commands, autoload_commands
 
 
 ###[ Configuration ]###
 
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers()
-conf_file = os.path.join(os.path.expanduser('~'), "django_chuck_conf.py")
-cfg = {
-    "use_virtualenvwrapper": False,
-    "site_basedir": os.path.join(os.getcwd(), "site_dir"),
-    "project_basedir": os.path.join(os.getcwd(), "project_dir"),
-    "virtualenv_basedir": os.path.join(os.getcwd(), "virtualenv_dir"),
-    "module_basedir": find_chuck_module_path(),
-}
 
 msgs = [
     "The roundhouse kick for project management",
@@ -79,19 +72,12 @@ print """
 print choice(msgs)
 print "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n"
 
-# Read config
-if os.access(conf_file, os.R_OK):
-    sys.path.insert(0, os.path.dirname(conf_file))
-    conf_module = os.path.basename(conf_file).replace(".py", "")
-    __import__(conf_module)
-
-    for attr in dir(sys.modules[conf_module]):
-        if not attr.startswith("_"):
-            cfg[attr] = getattr(sys.modules[conf_module], attr)
+settings = Settings()
+settings.read_config()
 
 # find all commands, autoload them and setup arg parsers
 command_list = find_commands()
-autoload_commands(subparsers, cfg, command_list)
+autoload_commands(subparsers, settings, command_list)
 
 # parse the args and call whatever function was selected
 args = parser.parse_args()

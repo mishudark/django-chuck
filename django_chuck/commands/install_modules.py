@@ -2,7 +2,7 @@ from django_chuck.commands.base import BaseCommand
 import os
 import sys
 import shutil
-from django_chuck.utils import append_to_file, get_files, get_template_engine, compile_template, get_placeholder
+from django_chuck.utils import append_to_file, get_files, get_template_engine, compile_template
 from random import choice
 
 class Command(BaseCommand):
@@ -56,9 +56,6 @@ class Command(BaseCommand):
 
         # The template engine that is used to compile the project files
         template_engine = get_template_engine(self.site_dir, self.project_dir, cfg.get("template_engine"))
-
-        self.placeholder = get_placeholder(self.args, self.cfg)
-
 
         # Clean module list
         self.modules_to_install = self.clean_module_list(self.modules_to_install, self.module_cache)

@@ -9,9 +9,8 @@ from django_chuck.exceptions import ModuleError, ShellError
 
 class BaseModule(object):
 
-    def __init__(self, module_name, args, cfg, module_dir=None):
-        self.cfg = cfg
-        self.args = args
+    def __init__(self, module_name, settings, module_dir=None):
+        self.settings = settings
 
         if module_dir:
             self.dir = module_dir
@@ -35,15 +34,11 @@ class BaseModule(object):
             self.meta_data = None
 
 
-    def arg_or_cfg(self, var):
-        return utils.arg_or_cfg(var, self.args, self.cfg)
-
-
     def __getattr__(self, name):
         """
         Get value either from command-line argument or config setting
         """
-        return utils.get_property(name, self.args, self.cfg)
+        return getattr(self.settings, name)
 
 
     def install(self, **kwargs):
@@ -71,7 +66,7 @@ class BaseModule(object):
 
                 # Apply templates
                 print "\t%s -> %s" % (input_file, output_file)
-                placeholder = utils.get_placeholder(self.args, self.cfg)
+                placeholder = self.settings.get_placeholder()
                 utils.compile_template(input_file, output_file, placeholder, self.site_dir, self.project_dir, self.template_engine, self.debug)
 
         if self.name == "core":
@@ -83,7 +78,7 @@ class BaseModule(object):
 
         # Shall we execute module post build action?
         if kwargs.get("exec_post_build", False) and self.meta_data:
-            self.meta_data = utils.inject_variables_and_functions(self.meta_data, self.args, self.cfg)
+            self.meta_data = utils.inject_variables_and_functions(self.meta_data, self.settings)
 
             try:
                 self.meta_data.post_build()
