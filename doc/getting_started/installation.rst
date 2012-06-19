@@ -14,10 +14,11 @@ Recommended
 
 * virtualenvwrapper
 
-Please not if you are using Debian, Ubuntu or Mint Linux you MUST install virtualenvwrapper using APT not pip otherwise it will be broken.
+.. note:: 
+    If you are using Debian, Ubuntu or Mint Linux you **must** install virtualenvwrapper using APT rather than pip, otherwise it will break.
 
 
-Installation per pip
+Installation via pip
 ====================
 
 * ``pip install django-chuck``
@@ -56,7 +57,7 @@ setting                  description
 debug                    Turn on debugging mode
 default_modules          Comma-separated list of module that should always be included when creating a new project
 django_settings          Default Django settings file
-module_basedirs          Comma-seperated list of directories where chuck should search for modules . will be replaced with the Django Chuck modules dir
+module_basedirs          Comma-separated list of directories where chuck should search for modules. Will be replaced with the Django Chuck modules dir
 module_aliases           A dictionary of lists containing module alias names and list of modules they install
 project_basedir          Where to store your projects
 python_version           Python version to use in virtualenv activate (default is version of current interpreter)
