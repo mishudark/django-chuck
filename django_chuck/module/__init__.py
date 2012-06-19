@@ -3,11 +3,15 @@ import sys
 import imp
 import shutil
 from random import choice
-from django_chuck import utils
+from django_chuck.utils import print_header, get_files
 from django_chuck.exceptions import ModuleError, ShellError
+from django_chuck.utils import compile_template
+from django_chuck.utils import append_to_file
+from django_chuck.utils import inject_variables_and_functions
+from django_chuck.utils import print_kill_message
 
 
-class BaseModule(object):
+class ChuckModule(object):
 
     def __init__(self, module_name, settings, module_dir=None):
         self.settings = settings
@@ -47,10 +51,10 @@ class BaseModule(object):
         Exec post build hook if exec_post_build is True
         """
 
-        utils.print_header("BUILDING " + self.name)
+        print_header("BUILDING " + self.name)
 
         # For each file in the module dir
-        for f in utils.get_files(self.dir):
+        for f in get_files(self.dir):
             if not "chuck_module.py" in f:
                 # Absolute path to module file
                 input_file = f
@@ -67,23 +71,23 @@ class BaseModule(object):
                 # Apply templates
                 print "\t%s -> %s" % (input_file, output_file)
                 placeholder = self.settings.get_placeholder()
-                utils.compile_template(input_file, output_file, placeholder, self.site_dir, self.project_dir, self.template_engine, self.debug)
+                compile_template(input_file, output_file, placeholder, self.site_dir, self.project_dir, self.template_engine, self.debug)
 
         if self.name == "core":
             secret_key = ''.join([choice('abcdefghijklmnopqrstuvwxyz0123456789!@%^&*(-_=+)') for i in range(50)])
-            utils.append_to_file(os.path.join(self.project_dir, "settings", "common.py"), "\nSECRET_KEY = '" + secret_key + "'\n")
+            append_to_file(os.path.join(self.project_dir, "settings", "common.py"), "\nSECRET_KEY = '" + secret_key + "'\n")
 
             if os.access(os.path.join(self.site_dir, ".gitignore_" + self.project_name), os.R_OK):
                 shutil.move(os.path.join(self.site_dir, ".gitignore_" + self.project_name), os.path.join(self.site_dir, ".gitignore"))
 
         # Shall we execute module post build action?
         if kwargs.get("exec_post_build", False) and self.meta_data:
-            self.meta_data = utils.inject_variables_and_functions(self.meta_data, self.settings)
+            self.meta_data = inject_variables_and_functions(self.meta_data, self.settings)
 
             try:
                 self.meta_data.post_build()
             except ShellError:
-                utils.print_kill_message()
+                print_kill_message()
                 sys.exit(1)
 
 

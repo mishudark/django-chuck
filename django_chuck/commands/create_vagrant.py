@@ -1,8 +1,7 @@
 import os
-import shutil
 import subprocess
 from django_chuck.commands.base import BaseCommand
-from django_chuck.base.modules import BaseModule
+from django_chuck.module import ChuckModule
 
 
 class Command(BaseCommand):
@@ -46,7 +45,7 @@ class Command(BaseCommand):
     def handle(self, args, cfg):
         super(Command, self).handle(args, cfg)
 
-        module = BaseModule("vagrant", args, cfg)
+        module = ChuckModule("vagrant", args, cfg)
         module.install(exec_post_build=True)
 
         box_path = self.get_box_path()

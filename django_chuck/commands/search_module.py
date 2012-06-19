@@ -1,5 +1,5 @@
-import os
 import re
+from django_chuck.module.utils import get_module_cache
 from django_chuck.commands.base import BaseCommand
 
 class Command(BaseCommand):
@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
         self.print_header("MATCHING MODULES")
 
-        for (module_name, module) in self.get_module_cache().items():
+        for (module_name, module) in get_module_cache(self.settings).items():
             if re.search(self.args.pattern, module_name) or \
                re.search(self.args.pattern, module.get_description()):
                 print "-------------------------------------------------------------------------------"

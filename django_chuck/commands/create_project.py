@@ -54,7 +54,7 @@ class Command(BaseCommand):
 
         self.print_header("SUMMARY")
 
-        installed_modules = self.get_install_modules()
+        installed_modules = self.settings.get_install_modules()
 
         print "Created project with modules " + ", ".join(installed_modules)
 

@@ -1,9 +1,7 @@
 from django_chuck.commands.base import BaseCommand
-import os
-import sys
-import shutil
-from django_chuck.utils import append_to_file, get_files, get_template_engine, compile_template
-from random import choice
+from django_chuck.exceptions import ModuleError
+from django_chuck.module.utils import get_module_cache, clean_module_list
+from django_chuck.utils import get_files, get_template_engine
 
 class Command(BaseCommand):
     help = "Create all modules"
@@ -49,16 +47,20 @@ class Command(BaseCommand):
         self.installed_modules = []
 
         # Get module cache
-        self.module_cache = self.get_module_cache()
+        self.module_cache = get_module_cache(self.settings)
 
         # Modules to install
-        self.modules_to_install = self.get_install_modules()
+        self.modules_to_install = self.settings.get_install_modules()
 
         # The template engine that is used to compile the project files
         template_engine = get_template_engine(self.site_dir, self.project_dir, cfg.get("template_engine"))
 
         # Clean module list
-        self.modules_to_install = self.clean_module_list(self.modules_to_install, self.module_cache)
+        try:
+            self.modules_to_install = clean_module_list(self.modules_to_install, self.module_cache)
+        except ModuleError, e:
+            print str(e)
+            self.kill_system()
 
         # Install each module
         for module in self.modules_to_install:

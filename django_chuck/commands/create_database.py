@@ -18,5 +18,5 @@ class Command(BaseCommand):
 
         sync_database.Command().handle(args, cfg)
 
-        if "south" in self.get_install_modules():
+        if "south" in self.settings.get_install_modules():
             migrate_database.Command().handle(args, cfg)

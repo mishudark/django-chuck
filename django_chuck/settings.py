@@ -1,6 +1,7 @@
 import os
 import sys
 from django_chuck.utils import find_chuck_module_path
+from django_chuck.module.utils import get_install_modules
 
 
 class Settings(object):
@@ -120,6 +121,9 @@ class Settings(object):
 
         return result
 
+
+    def get_install_modules(self):
+        return get_install_modules(self)
 
     def get_placeholder(self):
         placeholder = {
