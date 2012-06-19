@@ -1,12 +1,11 @@
-import pdb
 import shutil
-import subprocess
 import re
 import os
 import sys
 from signal import signal, SIGINT, SIGILL, SIGTERM, SIGSEGV, SIGABRT, SIGQUIT
 from random import choice
 from django_chuck.base.modules import BaseModule
+from django_chuck.exceptions import ShellError
 from django_chuck import utils
 
 
@@ -153,6 +152,30 @@ class BaseCommand(object):
     def arg_or_cfg(self, var):
         return utils.arg_or_cfg(var, self.args, self.cfg)
 
+
+    def execute(self, command, return_result=False):
+        """
+        Execute a command without loading virtualenv and django settings
+        """
+        return utils.execute(command, return_result)
+
+
+    def execute_in_project(self, cmd, return_result=False):
+        """
+        Execute a shell command after loading virtualenv and loading django settings.
+        Parameter return_result decides whether the shell command output should get
+        printed out or returned.
+        """
+        result = ""
+
+        try:
+            result = utils.execute_in_project(cmd, self.args, self.cfg, return_result)
+        except ShellError:
+            self.got_killed()
+
+        return result
+
+
     def insert_default_modules(self, module_list):
         """
         Add default modules to your module list
@@ -262,118 +285,6 @@ class BaseCommand(object):
         return module_list
 
 
-    def get_subprocess_kwargs(self):
-        return dict(
-            shell=True,
-            stderr=subprocess.PIPE,
-            stdin=subprocess.PIPE,
-        )
-
-
-    def execute(self, command, return_result=False):
-        if return_result:
-            kwargs = self.get_subprocess_kwargs()
-
-            if return_result:
-                kwargs['stdout'] = subprocess.PIPE
-
-            process = subprocess.Popen(command, **kwargs)
-            stdout, stderr = process.communicate()
-
-            if stderr:
-                print stderr
-
-            if process.returncode != 0:
-                print return_result
-                self.kill_system()
-
-            return stdout
-        else:
-            return_code = subprocess.call(command, shell=True)
-
-            if return_code != 0:
-                self.kill_system()
-
-
-    def execute_in_project(self, cmd, return_result=False):
-        """
-        Execute a shell command after loading virtualenv and loading django settings.
-        Parameter return_result decides whether the shell command output should get
-        printed out or returned.
-        """
-        commands = self.get_virtualenv_setup_commands(cmd)
-        return self.execute('; '.join(commands), return_result)
-
-
-    def get_virtualenv_setup_commands(self, cmd):
-        if self.use_virtualenvwrapper:
-            commands = [
-                '. virtualenvwrapper.sh',
-                'workon ' + self.site_name,
-                ]
-        else:
-            commands = [
-                '. ' + os.path.join(os.path.expanduser(self.virtualenv_dir), "bin", "activate"),
-                ]
-        commands.append(cmd)
-        return commands
-
-
-    def db_cleanup(self):
-        """
-        Sync and migrate, delete content types and load fixtures afterwards
-        This is for example useful for complete django-cms migrations
-        NOTE: This command will not erase your old database!
-        """
-        # os.chdir(self.site_dir)
-        # sys.path.append(self.site_dir)
-
-        # os.environ["DJANGO_SETTINGS_MODULE"] = self.django_settings
-        # # __import__(self.django_settings)
-        # # #settings.configure(default_settings=self.django_settings)
-
-        # #from django.utils.importlib import import_module
-        # #import_module(self.django_settings)
-
-        # from django.db import connection, transaction
-        # from django.conf import settings
-
-        # cursor = connection.cursor()
-
-        # if settings.DATABASE_ENGINE.startswith("postgresql"):
-        #     cursor.execute("truncate django_content_type cascade;")
-        # else:
-        #     cursor.execute("DELETE FROM auth_permission;")
-        #     cursor.execute("DELETE FROM django_admin_log;")
-        #     cursor.execute("DELETE FROM auth_user;")
-        #     cursor.execute("DELETE FROM auth_group_permissions;")
-        #     cursor.execute("DELETE FROM auth_user_user_permissions;")
-        #     cursor.execute("DELETE FROM django_content_type;")
-        #     cursor.execute("DELETE FROM django_site;")
-        #     cursor.execute("DELETE FROM south_migrationhistory;")
-
-        # transaction.commit_unless_managed()
-        # sys.path.pop()
-
-        cmd = """DELETE FROM auth_permission;
-        DELETE FROM django_admin_log;
-        DELETE FROM auth_user;
-        DELETE FROM auth_group_permissions;
-        DELETE FROM auth_user_user_permissions;
-        DELETE FROM django_content_type;
-        DELETE FROM django_site;
-        DELETE FROM south_migrationhistory;"""
-
-        self.execute_in_project("echo '" + cmd + "' | django-admin.py dbshell")
-
-
-    def load_fixtures(self, fixture_file):
-        """
-        Load a fixtures file
-        """
-        self.execute_in_project("django-admin.py loaddata " + fixture_file)
-
-
     def __getattr__(self, name):
         """
         Get value either from command-line argument or config setting
@@ -388,16 +299,7 @@ class BaseCommand(object):
         """
         Your computer failed! Let it die!
         """
-        msgs = [
-            "Your system gave an Chuck incompatible answer!",
-            "The system failed to obey Chuck! Terminate!",
-            "Chuck stumbled over his feet and the world fell apart.",
-            "Your computer lied to Chuck. Now it tastes a roundhouse-kick!",
-            "That was a serious failure. May god forgive Chuck doesnt!",
-            "Death to the system for being so faulty!",
-        ]
-
-        print "\n<<< " + choice(msgs)
+        utils.print_kill_message()
         self.got_killed()
 
 

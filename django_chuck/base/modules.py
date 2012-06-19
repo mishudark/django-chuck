@@ -1,9 +1,10 @@
 import os
+import sys
 import imp
 import shutil
 from random import choice
-from django_chuck.exceptions import ModuleError
 from django_chuck import utils
+from django_chuck.exceptions import ModuleError, ShellError
 
 
 class BaseModule(object):
@@ -83,7 +84,12 @@ class BaseModule(object):
         # Shall we execute module post build action?
         if kwargs.get("exec_post_build", False) and self.meta_data:
             self.meta_data = utils.inject_variables_and_functions(self.meta_data, self.args, self.cfg)
-            self.meta_data.post_build()
+
+            try:
+                self.meta_data.post_build()
+            except ShellError:
+                utils.print_kill_message()
+                sys.exit(1)
 
 
 

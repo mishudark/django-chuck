@@ -1,7 +1,10 @@
 import os
 import sys
 import functools
+import subprocess
+from random import choice
 import django_chuck
+from django_chuck.exceptions import ShellError
 
 
 def get_files(dir):
@@ -227,6 +230,120 @@ def get_placeholder(args, cfg):
     return placeholder
 
 
+def get_subprocess_kwargs():
+    return dict(
+        shell=True,
+        stderr=subprocess.PIPE,
+        stdin=subprocess.PIPE,
+    )
+
+
+def execute(command, return_result=False):
+    if return_result:
+        kwargs = get_subprocess_kwargs()
+
+        if return_result:
+            kwargs['stdout'] = subprocess.PIPE
+
+        process = subprocess.Popen(command, **kwargs)
+        stdout, stderr = process.communicate()
+
+        if stderr:
+            print stderr
+
+        if process.returncode != 0:
+            print return_result
+            raise ShellError("Command " + command)
+
+        return stdout
+    else:
+        return_code = subprocess.call(command, shell=True)
+
+        if return_code != 0:
+            raise ShellError("Command " + command)
+
+
+def get_virtualenv_setup_commands(cmd, args, cfg):
+    if get_property("use_virtualenvwrapper", args, cfg):
+        commands = [
+            '. virtualenvwrapper.sh',
+            'workon ' + get_property("site_name", args, cfg),
+            ]
+    else:
+        commands = [
+            '. ' + os.path.join(os.path.expanduser(get_property("virtualenv_dir", args, cfg)), "bin", "activate"),
+            ]
+    commands.append(cmd)
+    return commands
+
+
+def execute_in_project(cmd, args, cfg, return_result=False):
+    """
+    Execute a shell command after loading virtualenv and loading django settings.
+    Parameter return_result decides whether the shell command output should get
+    printed out or returned.
+    """
+    commands = get_virtualenv_setup_commands(cmd, args, cfg)
+    return execute('; '.join(commands), return_result)
+
+
+
+
+def db_cleanup():
+    """
+    Sync and migrate, delete content types and load fixtures afterwards
+    This is for example useful for complete django-cms migrations
+    NOTE: This command will not erase your old database!
+    """
+    # os.chdir(self.site_dir)
+    # sys.path.append(self.site_dir)
+
+    # os.environ["DJANGO_SETTINGS_MODULE"] = self.django_settings
+    # # __import__(self.django_settings)
+    # # #settings.configure(default_settings=self.django_settings)
+
+    # #from django.utils.importlib import import_module
+    # #import_module(self.django_settings)
+
+    # from django.db import connection, transaction
+    # from django.conf import settings
+
+    # cursor = connection.cursor()
+
+    # if settings.DATABASE_ENGINE.startswith("postgresql"):
+    #     cursor.execute("truncate django_content_type cascade;")
+    # else:
+    #     cursor.execute("DELETE FROM auth_permission;")
+    #     cursor.execute("DELETE FROM django_admin_log;")
+    #     cursor.execute("DELETE FROM auth_user;")
+    #     cursor.execute("DELETE FROM auth_group_permissions;")
+    #     cursor.execute("DELETE FROM auth_user_user_permissions;")
+    #     cursor.execute("DELETE FROM django_content_type;")
+    #     cursor.execute("DELETE FROM django_site;")
+    #     cursor.execute("DELETE FROM south_migrationhistory;")
+
+    # transaction.commit_unless_managed()
+    # sys.path.pop()
+
+    cmd = """DELETE FROM auth_permission;
+    DELETE FROM django_admin_log;
+    DELETE FROM auth_user;
+    DELETE FROM auth_group_permissions;
+    DELETE FROM auth_user_user_permissions;
+    DELETE FROM django_content_type;
+    DELETE FROM django_site;
+    DELETE FROM south_migrationhistory;"""
+
+    execute_in_project("echo '" + cmd + "' | django-admin.py dbshell")
+
+
+def load_fixtures(fixture_file):
+    """
+    Load a fixtures file
+    """
+    execute_in_project("django-admin.py loaddata " + fixture_file)
+
+
 def inject_variables_and_functions(victim_class, args, cfg):
     """
     Inject variables and functions to a class
@@ -240,9 +357,9 @@ def inject_variables_and_functions(victim_class, args, cfg):
     setattr(victim_class, "site_name", get_property("site_name", args, cfg))
 
     # inject functions
-    setattr(victim_class, "execute_in_project", get_property("execute_in_project", args, cfg))
-    setattr(victim_class, "db_cleanup", get_property("db_cleanup", args, cfg))
-    setattr(victim_class, "load_fixtures", get_property("load_fixtures", args, cfg))
+    setattr(victim_class, "execute_in_project", functools.partial(execute_in_project, args=args, cfg=cfg))
+    setattr(victim_class, "db_cleanup", db_cleanup)
+    setattr(victim_class, "load_fixtures", load_fixtures)
 
     return victim_class
 
@@ -254,6 +371,22 @@ def print_header(msg):
     print "\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
     print "[PHASE]: " + msg
     print "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n"
+
+
+def print_kill_message():
+    """
+    Your computer failed! Let it die!
+    """
+    msgs = [
+        "Your system gave an Chuck incompatible answer!",
+        "The system failed to obey Chuck! Terminate!",
+        "Chuck stumbled over his feet and the world fell apart.",
+        "Your computer lied to Chuck. Now it tastes a roundhouse-kick!",
+        "That was a serious failure. May god forgive Chuck doesnt!",
+        "Death to the system for being so faulty!",
+    ]
+
+    print "\n<<< " + choice(msgs)
 
 
 def get_template_engine(site_dir, project_dir, engine_module=None):

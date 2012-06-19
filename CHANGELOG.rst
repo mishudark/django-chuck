@@ -5,6 +5,7 @@ Django Chuck Changelog
 0.3.0
 -----
 
+* Vagrant support
 * uwsgi-cherokee module
 * search_module command
 * rebuild_virtualenv command

@@ -24,3 +24,17 @@ class ModuleError(Exception):
 
     def __str__(self):
         return str(self.__msg)
+
+
+class ShellError(Exception):
+    """
+    Command execution on shell failed
+    """
+    __msg = ""
+
+    def __init__(self, what):
+        super(ShellError, self).__init__()
+        self.__msg = what
+
+    def __str__(self):
+        return str(self.__msg)

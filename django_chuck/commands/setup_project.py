@@ -73,7 +73,7 @@ class Command(BaseCommand):
             if hasattr(chuck_setup, "modules"):
                 self.cfg["modules"] = chuck_setup.modules
 
-            self.inject_variables_and_functions(chuck_setup)
+            chuck_setup = self.inject_variables_and_functions(chuck_setup)
 
         # No chuck_setup file was found
         else:
@@ -122,17 +122,17 @@ class Command(BaseCommand):
         # Otherwise move source checkout
         shutil.move(self.checkout_destdir, self.site_dir)
 
-        if chuck_setup and getattr(chuck_setup, "post_git_clone"):
+        if chuck_setup and getattr(chuck_setup, "post_git_clone") and getattr(chuck_setup.post_git_clone, "__call__"):
             chuck_setup.post_git_clone()
 
         # Build Virtualenv
-        if chuck_setup and getattr(chuck_setup, "pre_build_virtualenv"):
+        if chuck_setup and getattr(chuck_setup, "pre_build_virtualenv") and getattr(chuck_setup.pre_build_virtualenv, "__call__"):
             chuck_setup.pre_build_virtualenv()
 
         create_virtualenv.Command().handle(args, cfg)
         install_virtualenv.Command().handle(args, cfg)
 
-        if chuck_setup and getattr(chuck_setup, "post_build_virtualenv"):
+        if chuck_setup and getattr(chuck_setup, "post_build_virtualenv") and getattr(chuck_setup.post_build_virtualenv, "__call__"):
             chuck_setup.post_build_virtualenv()
 
 
@@ -145,8 +145,8 @@ class Command(BaseCommand):
             modules_to_check = self.clean_module_list(modules_to_check, module_cache)
             for module_name in modules_to_check:
                 module = module_cache.get(module_name)
-                if module.cfg:
-                    self.inject_variables_and_functions(module.cfg)
+                if module.meta_data:
+                    self.inject_variables_and_functions(module.meta_data)
                 if module.post_setup:
                     module.post_setup()
 
@@ -156,27 +156,27 @@ class Command(BaseCommand):
         if not os.path.exists(os.path.join(self.site_dir, "db")):
             os.makedirs(os.path.join(self.site_dir, "db"))
 
-        if chuck_setup and getattr(chuck_setup, "pre_sync_db"):
+        if chuck_setup and getattr(chuck_setup, "pre_sync_db") and getattr(chuck_setup.pre_sync_db, "__call__"):
             chuck_setup.pre_sync_db()
 
-        if chuck_setup and getattr(chuck_setup, "extra_syncdb_options") and chuck_setup.extra_syncdb_options:
+        if chuck_setup and getattr(chuck_setup, "extra_syncdb_options") and chuck_setup.extra_syncdb_options and getattr(chuck_setup.extra_syncdb_options, "__call__"):
             cfg["extra_syncdb_options"] = chuck_setup.extra_syncdb_options
 
-        if chuck_setup and getattr(chuck_setup, "extra_migrate_options") and chuck_setup.extra_migrate_options:
+        if chuck_setup and getattr(chuck_setup, "extra_migrate_options") and chuck_setup.extra_migrate_options and getattr(chuck_setup.extra_migrate_options, "__call__"):
             cfg["extra_migrate_options"] = chuck_setup.extra_migrate_options
 
         sync_database.Command().handle(args, cfg)
 
-        if chuck_setup and getattr(chuck_setup, "post_sync_db"):
+        if chuck_setup and getattr(chuck_setup, "post_sync_db") and getattr(chuck_setup.post_sync_db, "__call__"):
             chuck_setup.post_sync_db()
 
-        if chuck_setup and getattr(chuck_setup, "pre_migrate_db"):
+        if chuck_setup and getattr(chuck_setup, "pre_migrate_db") and getattr(chuck_setup.pre_migrate_db, "__call__"):
             chuck_setup.pre_migrate_db()
 
 
         migrate_database.Command().handle(args, cfg)
 
-        if chuck_setup and getattr(chuck_setup, "post_migrate_db"):
+        if chuck_setup and getattr(chuck_setup, "post_migrate_db") and getattr(chuck_setup.post_migrate_db, "__call__"):
             chuck_setup.post_migrate_db()
 
 
