@@ -9,8 +9,7 @@ Welcome to Django Chuck's documentation!
 Django Chuck is a modular, open source, command-based project build system developed by
 Notch Interactive GmbH, that gives you the power to create new projects as fast as pushing on a button.
 
-It creates a virtualenv and a Django project for you, installs all required Python packages, creates t
-he database and a fab file for automatic deployment and thanks to the module system you can easily add
+It creates a virtualenv and a Django project for you, installs all required Python packages, creates the database and a fab file for automatic deployment and thanks to the module system you can easily add
 functionality like CMS, Facebook, Twitter, multilang and search engine support to a new or existing project.
 
 But Chuck cannot be just used to create a project it can also checkout the source for you and setup
