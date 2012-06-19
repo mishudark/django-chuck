@@ -15,7 +15,8 @@ import sys
 import argparse
 from random import choice
 from django_chuck.settings import Settings
-from django_chuck.utils import find_commands, autoload_commands
+from django_chuck.subsystem.filesystem import find_commands
+from django_chuck.utils import autoload_commands
 
 
 ###[ Configuration ]###

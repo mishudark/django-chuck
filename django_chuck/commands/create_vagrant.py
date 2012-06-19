@@ -1,6 +1,7 @@
 import os
 import subprocess
 from django_chuck.commands.base import BaseCommand
+from django_chuck.subsystem.vagrant import vagrant_start_box, vagrant_ssh
 from django_chuck.module import ChuckModule
 
 
@@ -31,10 +32,6 @@ class Command(BaseCommand):
         }))
 
 
-    def get_box_path(self):
-        return os.path.join(os.path.expanduser(self.site_dir), "vagrant")
-
-
     def signal_handler(self):
         super(Command, self).signal_handler()
 
@@ -50,9 +47,7 @@ class Command(BaseCommand):
 
         box_path = self.get_box_path()
 
-        cmd = "cd %s; vagrant box add %s_box %s; vagrant up" % (box_path, self.project_name, self.vagrant_box)
-        subprocess.call(cmd, shell=True)
+        vagrant_start_box(settings)
 
         if self.vagrant_commands:
-            cmd = "cd %s; vagrant ssh -c '%s'" % (box_path, self.vagrant_commands)
-            subprocess.call(cmd, shell=True)
+            vagrant_ssh(settings)

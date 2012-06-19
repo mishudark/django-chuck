@@ -3,10 +3,10 @@ import sys
 import imp
 import shutil
 from random import choice
-from django_chuck.utils import print_header, get_files
+from django_chuck.utils import print_header
 from django_chuck.exceptions import ModuleError, ShellError
 from django_chuck.utils import compile_template
-from django_chuck.utils import append_to_file
+from django_chuck.subsystem.filesystem import append_to_file, get_files
 from django_chuck.utils import inject_variables_and_functions
 from django_chuck.utils import print_kill_message
 

@@ -1,5 +1,5 @@
 from django_chuck.template.base import BaseEngine
-from django_chuck.utils import write_to_file
+from django_chuck.subsystem.filesystem import write_to_file
 from Cheetah.Template import Template
 
 class TemplateEngine(BaseEngine):
@@ -11,6 +11,3 @@ class TemplateEngine(BaseEngine):
 
         with open(input_file, "w") as f:
             f.write(template)
-
-
-

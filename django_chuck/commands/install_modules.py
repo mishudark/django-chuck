@@ -1,7 +1,9 @@
 from django_chuck.commands.base import BaseCommand
 from django_chuck.exceptions import ModuleError
 from django_chuck.module.utils import get_module_cache, clean_module_list
-from django_chuck.utils import get_files, get_template_engine
+from django_chuck.subsystem.filesystem import get_files
+from django_chuck.utils import get_template_engine
+
 
 class Command(BaseCommand):
     help = "Create all modules"

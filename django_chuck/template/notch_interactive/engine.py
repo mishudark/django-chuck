@@ -1,5 +1,5 @@
 from django_chuck.template.base import BaseEngine
-from django_chuck.utils import write_to_file
+from django_chuck.subsystem.filesystem import write_to_file
 from django_chuck.exceptions import TemplateError
 import os
 import re

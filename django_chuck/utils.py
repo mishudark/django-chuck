@@ -1,95 +1,9 @@
-import os
 import sys
 import functools
-import subprocess
 from random import choice
 import django_chuck
-from django_chuck.exceptions import ShellError
-
-
-def get_files(dir):
-    """
-    Recursivly read a directory and return list of all files
-    """
-    files = []
-
-    for (path, subdirs, new_files) in os.walk(dir):
-        for new_file in new_files:
-            files.append(os.path.join(path, new_file))
-
-    return files
-
-
-def write_to_file(out_file, data):
-    """
-    copy data to out_file
-    """
-    if os.access(out_file, os.W_OK):
-        out = open(out_file, "wb")
-    else:
-        if not os.path.exists(os.path.dirname(out_file)):
-            os.makedirs(os.path.dirname(out_file))
-
-        out = open(out_file, "wb")
-
-    out.write(data)
-    out.close()
-
-
-def append_to_file(out_file, data):
-    """
-    append data to out_file
-    """
-    if os.access(out_file, os.W_OK):
-        out = open(out_file, "ab")
-    else:
-        if not os.path.exists(os.path.dirname(out_file)):
-            os.makedirs(os.path.dirname(out_file))
-
-        out = open(out_file, "ab")
-
-    out.write(data)
-    out.close()
-
-
-
-def find_chuck_module_path():
-    """
-    Return path to chuck modules
-    """
-    return os.path.join(sys.prefix, "share", "django_chuck", "modules")
-
-
-def find_chuck_command_path():
-    """
-    Search for path to chuck commands in sys.path
-    """
-    module_path = None
-
-    for path in sys.path:
-        full_path = os.path.join(path, "django_chuck", "commands")
-
-        if os.path.exists(full_path):
-            module_path = full_path
-            break
-
-    return module_path
-
-
-def find_commands():
-    """
-    Find all django chuck commands and create a list of module names
-    """
-    commands = []
-    command_path = find_chuck_command_path()
-
-    if command_path:
-        for f in os.listdir(command_path):
-            if not f.startswith("_") and f.endswith(".py") and \
-               not f == "base.py" and not f == "test.py":
-                commands.append(f[:-3])
-
-    return commands
+from django_chuck.subsystem.database import load_fixtures, db_cleanup
+from django_chuck.subsystem.shell import execute_in_project
 
 
 def autoload_commands(subparsers, settings, command_list):
@@ -118,122 +32,6 @@ def autoload_commands(subparsers, settings, command_list):
     return True
 
 
-
-
-def get_subprocess_kwargs():
-    return dict(
-        shell=True,
-        stderr=subprocess.PIPE,
-        stdin=subprocess.PIPE,
-    )
-
-
-def execute(command, return_result=False):
-    if return_result:
-        kwargs = get_subprocess_kwargs()
-
-        if return_result:
-            kwargs['stdout'] = subprocess.PIPE
-
-        process = subprocess.Popen(command, **kwargs)
-        stdout, stderr = process.communicate()
-
-        if stderr:
-            print stderr
-
-        if process.returncode != 0:
-            print return_result
-            raise ShellError("Command " + command)
-
-        return stdout
-    else:
-        return_code = subprocess.call(command, shell=True)
-
-        if return_code != 0:
-            raise ShellError("Command " + command)
-
-
-def get_virtualenv_setup_commands(cmd, settings):
-    if settings.use_virtualenvwrapper:
-        commands = [
-            '. virtualenvwrapper.sh',
-            'workon ' + settings.site_name,
-            ]
-    else:
-        commands = [
-            '. ' + os.path.join(os.path.expanduser(settings.virtualenv_dir), "bin", "activate"),
-            ]
-    commands.append(cmd)
-    return commands
-
-
-def execute_in_project(cmd, settings, return_result=False):
-    """
-    Execute a shell command after loading virtualenv and loading django settings.
-    Parameter return_result decides whether the shell command output should get
-    printed out or returned.
-    """
-    commands = get_virtualenv_setup_commands(cmd, settings)
-    return execute('; '.join(commands), return_result)
-
-
-
-
-def db_cleanup():
-    """
-    Sync and migrate, delete content types and load fixtures afterwards
-    This is for example useful for complete django-cms migrations
-    NOTE: This command will not erase your old database!
-    """
-    # os.chdir(self.site_dir)
-    # sys.path.append(self.site_dir)
-
-    # os.environ["DJANGO_SETTINGS_MODULE"] = self.django_settings
-    # # __import__(self.django_settings)
-    # # #settings.configure(default_settings=self.django_settings)
-
-    # #from django.utils.importlib import import_module
-    # #import_module(self.django_settings)
-
-    # from django.db import connection, transaction
-    # from django.conf import settings
-
-    # cursor = connection.cursor()
-
-    # if settings.DATABASE_ENGINE.startswith("postgresql"):
-    #     cursor.execute("truncate django_content_type cascade;")
-    # else:
-    #     cursor.execute("DELETE FROM auth_permission;")
-    #     cursor.execute("DELETE FROM django_admin_log;")
-    #     cursor.execute("DELETE FROM auth_user;")
-    #     cursor.execute("DELETE FROM auth_group_permissions;")
-    #     cursor.execute("DELETE FROM auth_user_user_permissions;")
-    #     cursor.execute("DELETE FROM django_content_type;")
-    #     cursor.execute("DELETE FROM django_site;")
-    #     cursor.execute("DELETE FROM south_migrationhistory;")
-
-    # transaction.commit_unless_managed()
-    # sys.path.pop()
-
-    cmd = """DELETE FROM auth_permission;
-    DELETE FROM django_admin_log;
-    DELETE FROM auth_user;
-    DELETE FROM auth_group_permissions;
-    DELETE FROM auth_user_user_permissions;
-    DELETE FROM django_content_type;
-    DELETE FROM django_site;
-    DELETE FROM south_migrationhistory;"""
-
-    execute_in_project("echo '" + cmd + "' | django-admin.py dbshell")
-
-
-def load_fixtures(fixture_file):
-    """
-    Load a fixtures file
-    """
-    execute_in_project("django-admin.py loaddata " + fixture_file)
-
-
 def inject_variables_and_functions(victim_class, settings):
     """
     Inject variables and functions to a class
@@ -248,8 +46,8 @@ def inject_variables_and_functions(victim_class, settings):
 
     # inject functions
     setattr(victim_class, "execute_in_project", functools.partial(execute_in_project, settings=settings))
-    setattr(victim_class, "db_cleanup", db_cleanup)
-    setattr(victim_class, "load_fixtures", load_fixtures)
+    setattr(victim_class, "db_cleanup", functools.partial(db_cleanup, settings=settings))
+    setattr(victim_class, "load_fixtures", functools.partial(load_fixtures, settings=settings))
 
     return victim_class
 
@@ -290,7 +88,7 @@ def get_template_engine(site_dir, project_dir, engine_module=None):
 
     try:
         __import__(engine_module)
-    except Exception, e:
+    except ImportError, e:
         print "\n<<< Cannot import template engine " + engine_module
         print e
         sys.exit(0)

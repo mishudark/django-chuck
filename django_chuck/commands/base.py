@@ -1,12 +1,10 @@
 import shutil
-import re
 import os
 import sys
 from signal import signal, SIGINT, SIGILL, SIGTERM, SIGSEGV, SIGABRT, SIGQUIT
-from random import choice
-from django_chuck.base.modules import BaseModule
 from django_chuck.exceptions import ShellError
 from django_chuck.settings import Settings
+from django_chuck.subsystem.shell import execute, execute_in_project
 from django_chuck import utils
 
 
@@ -150,7 +148,7 @@ class BaseCommand(object):
         """
         Execute a command without loading virtualenv and django settings
         """
-        return utils.execute(command, return_result)
+        return execute(command, return_result)
 
 
     def execute_in_project(self, cmd, return_result=False):
@@ -162,7 +160,7 @@ class BaseCommand(object):
         result = ""
 
         try:
-            result = utils.execute_in_project(cmd, self.settings, return_result)
+            result = execute_in_project(cmd, self.settings, return_result)
         except ShellError:
             self.got_killed()
 

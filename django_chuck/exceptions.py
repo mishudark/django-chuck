@@ -37,4 +37,4 @@ class ShellError(Exception):
         self.__msg = what
 
     def __str__(self):
-        return str(self.__msg)
+        return str("Command " + self.__msg + " failed")

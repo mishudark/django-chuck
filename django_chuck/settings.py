@@ -1,6 +1,6 @@
 import os
 import sys
-from django_chuck.utils import find_chuck_module_path
+from django_chuck.subsystem.filesystem import find_chuck_module_path
 from django_chuck.module.utils import get_install_modules
 
 

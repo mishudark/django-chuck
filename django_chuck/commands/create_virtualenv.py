@@ -1,4 +1,3 @@
-import subprocess
 from django_chuck.commands.base import BaseCommand
 import os
 import shutil
@@ -40,7 +39,9 @@ class Command(BaseCommand):
         print "Destination: %s" % export_dest.name
         print "Project path: %s" % "export PYTHONPATH=\"" + self.site_dir + "\":$PYTHONPATH"
         export_dest.write("export PYTHONPATH=\"" + self.site_dir + "\":$PYTHONPATH\n")
+
         if self.django_settings:
             print "Project settings: %s" % "export DJANGO_SETTINGS_MODULE=" + self.django_settings + "\n"
             export_dest.write("export DJANGO_SETTINGS_MODULE=" + self.django_settings + "\n")
+
         export_dest.close()

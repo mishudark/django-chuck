@@ -1,9 +1,8 @@
 import os
-import sys
 import shutil
 import tempfile
-import subprocess
 from django_chuck.commands.base import BaseCommand
+from django_chuck.subsystem.version_control_system import checkout_source
 
 
 class Command(BaseCommand):
@@ -50,38 +49,18 @@ class Command(BaseCommand):
         if not self.checkout_url:
             raise ValueError("checkout_url is not defined")
 
-        if not self.checkout_destdir:
-            self.checkout_destdir = tempfile.mktemp()
+        if not self.settings.checkout_destdir:
+            self.settings.checkout_destdir = tempfile.mktemp()
 
         self.print_header("CHECKOUT SOURCE")
 
-        if os.path.exists(self.checkout_destdir):
+        if os.path.exists(self.settings.checkout_destdir):
             answer = raw_input("Checkout dir exists. Use old source? <Y/n>: ")
 
             if answer.lower() == "n":
-                shutil.rmtree(self.checkout_destdir)
+                shutil.rmtree(self.settings.checkout_destdir)
             else:
                 return
 
-        if self.version_control_system.lower() == "cvs":
-            if self.branch:
-                cmd ="cvs checkout -r " + self.branch + " " + self.checkout_url + " " + self.checkout_destdir
-            else:
-                cmd ="cvs checkout " + self.checkout_url + " " + self.checkout_destdir
-        elif self.version_control_system.lower() == "svn":
-            cmd = "svn checkout " + self.checkout_url + " " + self.checkout_destdir
-        elif self.version_control_system.lower() == "hg":
-            if self.branch:
-                cmd = "hg clone " + self.checkout_url + " -r " + self.branch + " " + self.checkout_destdir
-            else:
-                cmd = "hg clone " + self.checkout_url + " " + self.checkout_destdir
-        else:
-            if self.branch:
-                cmd = "git clone " + self.checkout_url + " -b " + self.branch + " " + self.checkout_destdir
-            else:
-                cmd = "git clone " + self.checkout_url + " " + self.checkout_destdir
-
-        cmd_successful = os.system(cmd)
-
-        if cmd_successful > 0:
+        if checkout_source(self.settings) > 0:
             self.kill_system()

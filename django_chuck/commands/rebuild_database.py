@@ -1,6 +1,7 @@
 import re
 import os
 from django_chuck.commands.base import BaseCommand
+from django_chuck.subsystem.database import load_fixtures, db_cleanup
 from django_chuck.commands import sync_database, migrate_database
 
 
@@ -29,8 +30,7 @@ class Command(BaseCommand):
         try:
             if args.fixture_files:
                 for fixture_file in re.split("\s*,\s*", args.fixture_files):
-                    self.db_cleanup()
-                    self.load_fixtures(os.path.join(self.site_dir, "fixtures", fixture_file))
+                    db_cleanup(self.settings)
+                    load_fixtures(os.path.join(self.site_dir, "fixtures", fixture_file), self.settings)
         except AttributeError:
             pass
-
