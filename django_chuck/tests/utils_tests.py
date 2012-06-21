@@ -4,63 +4,21 @@ import shutil
 import unittest
 from django_chuck import utils
 import django_chuck.template.base
+from django_chuck.subsystem.filesystem import find_commands
 from django_chuck.exceptions import TemplateError
+from django_chuck.settings import Settings
 
 
 class UtilsTest(unittest.TestCase):
-    def setUp(self):
-        self.test_file = os.path.join("django_chuck", "tests", "project_dir", "test_file")
-
-        if os.path.isfile(self.test_file):
-            os.unlink(self.test_file)
-
-    def test_get_files(self):
-        files = utils.get_files(os.curdir)
-        self.assertTrue(len(files) > 0)
-
-        for file in files:
-            self.assertTrue(os.path.isfile(file))
-
-
-    def test_write_to_file(self):
-        test_data = "some wicked cool stuff"
-        utils.write_to_file(self.test_file, test_data)
-
-        with open(self.test_file, "r") as f:
-            self.assertEqual(f.read(), test_data)
-
-
-    def test_append_to_file(self):
-        test_data = "some wicked cool stuff"
-        test_data2 = "even more test data"
-
-        utils.write_to_file(self.test_file, test_data)
-        utils.append_to_file(self.test_file, test_data2)
-
-        with open(self.test_file, "r") as f:
-            self.assertEqual(f.read(), test_data + test_data2)
-
-
-    def test_find_chuck_module_path(self):
-        self.assertTrue(os.path.exists(utils.find_chuck_module_path()))
-
-
-    def test_find_chuck_command_path(self):
-        self.assertTrue(os.path.exists(utils.find_chuck_command_path()))
-
-
-    def test_find_commands(self):
-        self.assertTrue(len(utils.find_commands()) > 0)
-
 
     def test_autoload_commands(self):
         import argparse
         parser = argparse.ArgumentParser()
         subparsers = parser.add_subparsers()
-        cfg = {}
-        cmds = utils.find_commands()
+        settings = Settings()
+        cmds = find_commands()
 
-        self.assertTrue(utils.autoload_commands(subparsers, cfg, cmds))
+        self.assertTrue(utils.autoload_commands(subparsers, settings, cmds))
 
 
     def test_get_template_engine(self):
