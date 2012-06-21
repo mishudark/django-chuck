@@ -23,7 +23,7 @@ class build_py(_build_py):
     ]
 
     setup(name="django-chuck",
-          version="0.2.3",
+          version="0.3.0",
           author="Notch Interactive GmbH",
           author_email="chuck@notch-interactive.com",
           url="http://github.com/notch-interactive/django-chuck",
@@ -46,7 +46,7 @@ system, setup your hosting or do whatever you might imagine!
 Currently supported version control systems are: CVS, Subversion, GIT and
 Mercurial.""",
 
-          packages=["django_chuck", "django_chuck.commands", "django_chuck.base", "django_chuck.template", "django_chuck.template.notch_interactive"],
+          packages=["django_chuck", "django_chuck.commands", "django_chuck.module", "django_chuck.subsystem", "django_chuck.template", "django_chuck.template.notch_interactive"],
           scripts=["chuck"],
           data_files=[(os.path.join("share", "django_chuck"), ['example_conf.py'])],
     )
