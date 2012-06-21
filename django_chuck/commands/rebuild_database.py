@@ -12,7 +12,7 @@ class Command(BaseCommand):
         super(Command, self).__init__()
 
         self.opts.append(("fixture_files", {
-            "help": "Comma separated list of fixture files to load",
+            "help": "Comma separated list of fixture files to load (filename relative to fixture folder)",
             "nargs": "?",
         }))
 
