@@ -58,7 +58,7 @@ def get_module_cache(settings):
     module_cache = {}
 
     for module_basedir in settings.module_basedirs:
-        for module in os.listdir(module_basedir):
+        for module in os.listdir(os.path.expanduser(module_basedir)):
             module_dir = os.path.join(module_basedir, module)
             if os.path.isdir(module_dir) and module not in module_cache.keys():
                 module_cache[module] = ChuckModule(module, settings, module_dir)
