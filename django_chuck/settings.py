@@ -5,7 +5,7 @@ from django_chuck.module.utils import get_install_modules
 
 
 class Settings(object):
-    def __init__(self, args=None, cfg=None):
+    def __init__(self, args=None, cfg={}):
         self.args = args
         self.cfg = cfg
 
