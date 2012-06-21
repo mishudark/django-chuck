@@ -3,7 +3,7 @@ import sys
 import shutil
 from django_chuck.commands.base import BaseCommand
 from django_chuck.commands import checkout_source, create_virtualenv, install_virtualenv, sync_database, migrate_database
-from django_chuck.module.utils import get_module_cache
+from django_chuck.module.utils import get_module_cache, clean_module_list
 
 
 class Command(BaseCommand):
@@ -144,7 +144,7 @@ class Command(BaseCommand):
 
             module_cache = get_module_cache(self.settings)
             modules_to_check = self.cfg["modules"].split(',')
-            modules_to_check = self.clean_module_list(modules_to_check, module_cache)
+            modules_to_check = clean_module_list(modules_to_check, module_cache)
             for module_name in modules_to_check:
                 module = module_cache.get(module_name)
                 if module.meta_data:
