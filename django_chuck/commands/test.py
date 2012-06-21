@@ -5,10 +5,12 @@ from django_chuck.commands.base import BaseCommand
 from django_chuck.settings import Settings
 
 class CommandsTest(unittest.TestCase):
-    def test_inject_variables_and_functions(self):
-        victim_class = type("Victim", (object,), {})
+    def setUp(self):
         test_class = type("Test", (BaseCommand,), {})
         self.test_obj = test_class()
+
+    def test_inject_variables_and_functions(self):
+        victim_class = type("Victim", (object,), {})
 
         self.test_obj.settings.cfg["site_dir"] = "site_dir"
         self.test_obj.settings.cfg["project_dir"] = "project_dir"

@@ -45,7 +45,7 @@ class BaseCommand(object):
         signal(SIGSEGV, self.got_killed)
         signal(SIGTERM, self.got_killed)
 
-        self.settings = None
+        self.settings = Settings()
 
         # dont check that project prefix and name exist?
         self.no_default_checks = False
