@@ -1,9 +1,7 @@
 #!/bin/bash
 
 # run unit tests
-python django_chuck/test.py || exit 1
-python django_chuck/commands/test.py  || exit 1
-python django_chuck/template/notch_interactive/test.py || exit 1
+nosetests || exit 1
 
 
 # test commands
