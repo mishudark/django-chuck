@@ -172,14 +172,15 @@ class Command(BaseCommand):
         if chuck_setup and getattr(chuck_setup, "post_sync_db") and getattr(chuck_setup.post_sync_db, "__call__"):
             chuck_setup.post_sync_db()
 
-        if chuck_setup and getattr(chuck_setup, "pre_migrate_db") and getattr(chuck_setup.pre_migrate_db, "__call__"):
-            chuck_setup.pre_migrate_db()
+        if chuck_setup and "south" in chuck_setup.modules:
+            if chuck_setup and getattr(chuck_setup, "pre_migrate_db") and getattr(chuck_setup.pre_migrate_db, "__call__"):
+                chuck_setup.pre_migrate_db()
 
 
-        migrate_database.Command().handle(args, cfg)
+            migrate_database.Command().handle(args, cfg)
 
-        if chuck_setup and getattr(chuck_setup, "post_migrate_db") and getattr(chuck_setup.post_migrate_db, "__call__"):
-            chuck_setup.post_migrate_db()
+            if chuck_setup and getattr(chuck_setup, "post_migrate_db") and getattr(chuck_setup.post_migrate_db, "__call__"):
+                chuck_setup.post_migrate_db()
 
 
         self.print_header("SUMMARY")
