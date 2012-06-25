@@ -9,12 +9,14 @@ from django_chuck.utils import compile_template
 from django_chuck.subsystem.filesystem import append_to_file, get_files
 from django_chuck.utils import inject_variables_and_functions
 from django_chuck.utils import print_kill_message
+from django_chuck.exceptions import TemplateError
 
 
 class ChuckModule(object):
 
     def __init__(self, module_name, settings, module_dir=None):
         self.settings = settings
+        self.errors = []
 
         if module_dir:
             self.dir = module_dir
@@ -71,7 +73,13 @@ class ChuckModule(object):
                 # Apply templates
                 print "\t%s -> %s" % (input_file, output_file)
                 placeholder = self.settings.get_placeholder()
-                compile_template(input_file, output_file, placeholder, self.site_dir, self.project_dir, self.template_engine, self.debug)
+
+                try:
+                    compile_template(input_file, output_file, placeholder, self.site_dir, self.project_dir, self.template_engine, self.debug)
+                except TemplateError, e:
+                    err_msg = "\n<<< TEMPLATE ERROR in file " + input_file + "\n" + str(e) + "\n"
+                    print err_msg
+                    self.errors.append("[" + self.name + "] " + err_msg)
 
         if self.name == "core":
             secret_key = ''.join([choice('abcdefghijklmnopqrstuvwxyz0123456789!@%^&*(-_=+)') for i in range(50)])

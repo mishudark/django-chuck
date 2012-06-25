@@ -118,11 +118,4 @@ def compile_template(input_file, output_file, placeholder, site_dir, project_dir
     else:
         engine = get_template_engine(site_dir, project_dir)
 
-    try:
-        engine.handle(input_file, output_file, placeholder)
-    except django_chuck.exceptions.TemplateError, e:
-        print "\n<<< TEMPLATE ERROR in file " + input_file + "\n"
-        print str(e) + "\n"
-        result = False
-
-    return result
+    return engine.handle(input_file, output_file, placeholder)

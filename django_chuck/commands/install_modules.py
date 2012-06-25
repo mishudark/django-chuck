@@ -12,7 +12,7 @@ class Command(BaseCommand):
     modules_to_install = []
 
     # Remember which module were already installed
-    installed_modules = []
+    installed_modules = {}
 
     # Remember where we can find which module
     module_cache = {}
@@ -39,14 +39,15 @@ class Command(BaseCommand):
                 setattr(module.get_post_build(), "installed_modules", self.installed_modules)
                 self.post_build_actions.append((module.name, module.get_post_build()))
 
+
             module.install()
-            self.installed_modules.append(module.name)
+            self.installed_modules[module.name] = module
 
 
     def handle(self, args, cfg):
         super(Command, self).handle(args, cfg)
 
-        self.installed_modules = []
+        self.installed_modules = {}
 
         # Get module cache
         self.module_cache = get_module_cache(self.settings)
@@ -68,7 +69,7 @@ class Command(BaseCommand):
         for module in self.modules_to_install:
             self.install_module(module)
 
-        not_installed_modules = [m for m in self.modules_to_install if not m in self.installed_modules]
+        not_installed_modules = [m for m in self.modules_to_install if not m in self.installed_modules.keys()]
 
         if not_installed_modules:
             print "\n<<< The following modules cannot be found " + ",".join(not_installed_modules)

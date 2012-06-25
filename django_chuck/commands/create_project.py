@@ -46,7 +46,8 @@ class Command(BaseCommand):
             create_vagrant.Command().handle(args, cfg)
 
         create_virtualenv.Command().handle(args, cfg)
-        install_modules.Command().handle(args, cfg)
+        installer = install_modules.Command()
+        installer.handle(args, cfg)
         install_virtualenv.Command().handle(args, cfg)
         build_snapshot.Command().handle(args, cfg)
         create_database.Command().handle(args, cfg)
@@ -57,6 +58,18 @@ class Command(BaseCommand):
         installed_modules = self.settings.get_install_modules()
 
         print "Created project with modules " + ", ".join(installed_modules)
+
+        errors = []
+
+        for module in installer.installed_modules.values():
+            if module.errors:
+                errors.extend(module.errors)
+
+        if errors:
+            print "\nGOT ERRORS:\n"
+
+            for error in errors:
+                print error
 
         if self.use_virtualenvwrapper:
             print "\nworkon " + self.site_name
