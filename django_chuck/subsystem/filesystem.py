@@ -52,6 +52,9 @@ def find_chuck_module_path():
     """
     Return path to chuck modules
     """
+    if os.path.exists(os.path.join(os.getcwd(), "modules")):
+        return os.path.join(os.getcwd(), "modules")
+
     return os.path.join(sys.prefix, "share", "django_chuck", "modules")
 
 
