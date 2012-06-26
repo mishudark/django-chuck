@@ -89,7 +89,7 @@ class ChuckModule(object):
                 shutil.move(os.path.join(self.site_dir, ".gitignore_" + self.project_name), os.path.join(self.site_dir, ".gitignore"))
 
         # Shall we execute module post build action?
-        if kwargs.get("exec_post_build", False) and self.meta_data:
+        if kwargs.get("exec_post_build", False) and self.meta_data and hasattr(self.meta_data, "post_build"):
             self.meta_data = inject_variables_and_functions(self.meta_data, self.settings)
 
             try:
