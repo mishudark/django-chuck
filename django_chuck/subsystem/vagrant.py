@@ -7,12 +7,12 @@ def get_box_path(settings):
 
 
 def vagrant_start_box(settings):
-    cmd = "cd %s; vagrant box xadd %s_box %s; vagrant up" % (get_box_path(settings), settings.project_name, settings.vagrant_box)
+    cmd = "cd %s; vagrant box add %s_box %s; vagrant up" % (get_box_path(settings), settings.project_name, settings.vagrant_box)
     subprocess.call(cmd, shell=True)
 
 
 def vagrant_stop_box(settings):
-    cmd = "cd %s; vagrant box xadd %s_box %s; vagrant halt" % (get_box_path(settings), settings.project_name, settings.vagrant_box)
+    cmd = "cd %s; vagrant halt" % (get_box_path(settings), )
     subprocess.call(cmd, shell=True)
 
 

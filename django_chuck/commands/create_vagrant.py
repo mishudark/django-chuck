@@ -42,12 +42,10 @@ class Command(BaseCommand):
     def handle(self, args, cfg):
         super(Command, self).handle(args, cfg)
 
-        module = ChuckModule("vagrant", args, cfg)
+        module = ChuckModule("vagrant", self.settings)
         module.install(exec_post_build=True)
 
-        box_path = self.get_box_path()
-
-        vagrant_start_box(settings)
+        vagrant_start_box(self.settings)
 
         if self.vagrant_commands:
-            vagrant_ssh(settings)
+            vagrant_ssh(self.settings)
