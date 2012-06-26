@@ -47,8 +47,6 @@ Customizations
 .. toctree::
    :maxdepth: 2
 
-   customization/configuration.rst
-   customization/default_modules.rst
    customization/chuck_setup.rst
    customization/writing_templates.rst
    customization/add_module.rst
@@ -63,4 +61,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
