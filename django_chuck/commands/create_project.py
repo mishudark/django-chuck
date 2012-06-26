@@ -40,7 +40,8 @@ class Command(BaseCommand):
 
         # Building a new project
         else:
-            os.makedirs(self.site_dir)
+            if not os.path.exists(self.site_dir):
+                os.makedirs(self.site_dir)
 
         if self.use_vagrant:
             create_vagrant.Command().handle(args, cfg)
