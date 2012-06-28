@@ -10,7 +10,8 @@ Django Chuck Changelog
 * search_module command
 * rebuild_virtualenv command
 * Support for travis-ci and tox by msabramo
-
+* Refactorings
+* UML diagram in doc/graph.png
 
 0.2.3
 -----
