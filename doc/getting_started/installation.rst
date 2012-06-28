@@ -14,7 +14,7 @@ Recommended
 
 * virtualenvwrapper
 
-.. note:: 
+.. note::
     If you are using Debian, Ubuntu or Mint Linux you **must** install virtualenvwrapper using APT rather than pip, otherwise it will break.
 
 
@@ -37,7 +37,7 @@ Configuration
 
 Locate the ``example_conf.py`` file on your computer:
 
-* on Linux: ``/usr/share/django_chuck/example_conf.py``
+* on Linux: ``/usr/share/django_chuck/example_conf.py`` or maybe ``/usr/local/share/django_chuck/example_conf.py`` as reported for Ubuntu.
 * on Mac OS X: ``/System/Library/Frameworks/Python.framework/Versions/2.7./share/django-chuck/example_conf.py``
 * on Mac OS X with a MacPorts Python version: ``/opt/local/Library/Frameworks/Python.framework/Versions/2.7/share/django-chuck/example_conf.py``
 
