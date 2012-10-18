@@ -1,15 +1,15 @@
 # Where to put virtualenvs?
-virtualenv_basedir="~/work/virtualenvs"
+virtualenv_basedir="/home/vagrant/sites/virtualenvs"
 
 # Where to put project dirs?
-project_basedir="~/work/projects"
+project_basedir="/home/vagrant/sites/projects"
 
 # Comma seperated list of dirs where Chuck should look for modules.
 # . will be replaced with the Django Chuck modules dir
 module_basedirs = ["."]
 
 # comma seperated list of modules that always should be installed
-default_modules=["core", "south"]
+default_modules=["core",'django-1.4','uwsgi','nginx','fabric', 'mongoengine']
 
 # comma seperated list of app that should additionally get installed
 #default_additional_apps = ["south"]
@@ -39,10 +39,10 @@ branch = ""
 # python_version = "2.7"
 
 # Where to find virtualenvs on your server?
-server_virtualenv_basedir = "/home/www-data/virtualenvs"
+server_virtualenv_basedir = "/home/vagrant/virtualenvs"
 
 # Where to projects on your server?
-server_project_basedir = "/home/www-data/sites"
+server_project_basedir = "/home/vagrant/sites"
 
 # What is your email domain?
 email_domain = "localhost"
