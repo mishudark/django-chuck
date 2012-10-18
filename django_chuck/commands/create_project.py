@@ -27,7 +27,7 @@ class Command(BaseCommand):
         install_modules.Command().handle(args, cfg)
         install_virtualenv.Command().handle(args, cfg)
         build_snapshot.Command().handle(args, cfg)
-        create_database.Command().handle(args, cfg)
+        #create_database.Command().handle(args, cfg)
 
 
         self.print_header("SUMMARY")
@@ -43,4 +43,4 @@ class Command(BaseCommand):
 
             print "cd " + self.site_dir
 
-        print "django-admin.py createsuperuser"
+        #print "django-admin.py createsuperuser"

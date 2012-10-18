@@ -15,10 +15,7 @@ SERVER_EMAIL = 'webmaster@$EMAIL_DOMAIN'
 DEFAULT_FROM_EMAIL = 'webmaster@EMAIL_DOMAIN'
 
 # Misc
-PREPEND_WWW = True
-
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = ''
+#PREPEND_WWW = True
 
 # Cache
 CACHES = {

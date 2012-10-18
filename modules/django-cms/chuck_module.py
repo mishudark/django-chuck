@@ -1,4 +1,4 @@
-depends = ['django-1.3', 'pil', 'html5lib']
+depends = ['django-1.4', 'pil', 'html5lib']
 description = """
 Adds Django CMS to your project.
 
